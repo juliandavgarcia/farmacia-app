@@ -1,0 +1,212 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../node_modules/.prisma/client"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Cuenta {
+  id                String  @id @default(cuid())
+  usuarioId         String  @map("user_id")
+  tipo              String
+  proveedor         String
+  idCuentaProveedor String  @map("provider_account_id")
+  tokenActualiza    String? @db.Text
+  tokenAcceso       String? @db.Text
+  expiraEn          Int?
+  tipoToken         String?
+  alcance           String?
+  tokenId           String? @db.Text
+  estadoSesion      String?
+
+  usuario Usuario @relation(fields: [usuarioId], references: [id], onDelete: Cascade)
+
+  @@unique([proveedor, idCuentaProveedor])
+  @@map("accounts")
+}
+
+enum Rol {
+  USER
+  ADMIN
+  CAJERO
+  FARMACEUTICO
+}
+
+model Usuario {
+  id               String    @id @default(cuid())
+  nombre           String?
+  correo           String?   @unique
+  correoVerificado DateTime? @map("email_verified")
+  imagen           String?
+  contrasena       String?
+  rol              Rol       @default(USER)
+  estado           Boolean   @default(true)
+  creadoEn         DateTime  @default(now()) @map("created_at")
+  actualizadoEn    DateTime  @updatedAt @map("updated_at")
+  cuentas          Cuenta[]
+  ventas           Venta[]
+  compras          Compra[]
+
+  @@map("users")
+}
+
+model TokenVerificacion {
+  identificador String
+  token         String
+  expira        DateTime
+
+  @@unique([identificador, token])
+  @@map("verification_tokens")
+}
+
+// Entidades básicas para el sistema farmacéutico
+
+model Categoria {
+  id            String     @id @default(cuid())
+  nombre        String     @unique
+  descripcion   String?
+  esMedicamento Boolean    @default(false) @map("es_medicamento")
+  productos     Producto[]
+
+  @@map("categorias")
+}
+
+model Proveedor {
+  id        String     @id @default(cuid())
+  nombre    String
+  nit       String     @unique
+  direccion String?
+  telefono  String?
+  correo    String?
+  contacto  String?
+  productos Producto[]
+  compras   Compra[]
+
+  @@map("proveedores")
+}
+
+model Producto {
+  id             String  @id @default(cuid())
+  nombre         String
+  descripcion    String?
+  codigoBarras   String? @unique @map("codigo_barras")
+  registroInvima String? @map("registro_invima")
+  precioCompra   Decimal @map("precio_compra") @db.Decimal(10, 2)
+  precioVenta    Decimal @map("precio_venta") @db.Decimal(10, 2)
+  stock          Int     @default(0)
+  stockMinimo    Int     @default(5) @map("stock_minimo")
+  requiereReceta Boolean @default(false) @map("requiere_receta")
+  estado         Boolean @default(true)
+
+  categoriaId String    @map("categoria_id")
+  categoria   Categoria @relation(fields: [categoriaId], references: [id])
+
+  proveedorId String?    @map("proveedor_id")
+  proveedor   Proveedor? @relation(fields: [proveedorId], references: [id])
+
+  lotes          Lote[]
+  detallesVenta  DetalleVenta[]
+  detallesCompra DetalleCompra[]
+
+  @@map("productos")
+}
+
+model Lote {
+  id               String   @id @default(cuid())
+  productoId       String   @map("producto_id")
+  numeroLote       String   @map("numero_lote")
+  fechaVencimiento DateTime @map("fecha_vencimiento")
+  cantidad         Int
+  disponible       Int      @default(0)
+
+  producto      Producto       @relation(fields: [productoId], references: [id])
+  detallesVenta DetalleVenta[]
+
+  @@map("lotes")
+}
+
+model Cliente {
+  id        String  @id @default(cuid())
+  documento String  @unique
+  nombre    String
+  telefono  String?
+  direccion String?
+  correo    String?
+  ventas    Venta[]
+
+  @@map("clientes")
+}
+
+model Venta {
+  id            String   @id @default(cuid())
+  numeroFactura String   @unique @map("numero_factura")
+  fecha         DateTime @default(now())
+  subtotal      Decimal  @db.Decimal(10, 2)
+  iva           Decimal  @default(0) @db.Decimal(10, 2)
+  total         Decimal  @db.Decimal(10, 2)
+  metodoPago    String   @map("metodo_pago") // Efectivo, Tarjeta
+  estado        String   @default("COMPLETADA") // COMPLETADA, ANULADA
+
+  usuarioId String  @map("usuario_id")
+  usuario   Usuario @relation(fields: [usuarioId], references: [id])
+
+  clienteId String?  @map("cliente_id")
+  cliente   Cliente? @relation(fields: [clienteId], references: [id])
+
+  detalles DetalleVenta[]
+
+  @@map("ventas")
+}
+
+model DetalleVenta {
+  id             String  @id @default(cuid())
+  ventaId        String  @map("venta_id")
+  productoId     String  @map("producto_id")
+  loteId         String  @map("lote_id")
+  cantidad       Int
+  precioUnitario Decimal @map("precio_unitario") @db.Decimal(10, 2)
+  subtotal       Decimal @db.Decimal(10, 2)
+
+  venta    Venta    @relation(fields: [ventaId], references: [id], onDelete: Cascade)
+  producto Producto @relation(fields: [productoId], references: [id])
+  lote     Lote     @relation(fields: [loteId], references: [id])
+
+  @@map("detalles_venta")
+}
+
+model Compra {
+  id            String   @id @default(cuid())
+  numeroFactura String   @map("numero_factura")
+  fecha         DateTime @default(now())
+  subtotal      Decimal  @db.Decimal(10, 2)
+  impuestos     Decimal  @default(0) @db.Decimal(10, 2)
+  total         Decimal  @db.Decimal(10, 2)
+  estado        String   @default("COMPLETADA") // COMPLETADA, PENDIENTE, CANCELADA
+
+  proveedorId String    @map("proveedor_id")
+  proveedor   Proveedor @relation(fields: [proveedorId], references: [id])
+
+  usuarioId String  @map("usuario_id")
+  usuario   Usuario @relation(fields: [usuarioId], references: [id])
+
+  detalles DetalleCompra[]
+
+  @@map("compras")
+}
+
+model DetalleCompra {
+  id             String  @id @default(cuid())
+  compraId       String  @map("compra_id")
+  productoId     String  @map("producto_id")
+  cantidad       Int
+  precioUnitario Decimal @map("precio_unitario") @db.Decimal(10, 2)
+  subtotal       Decimal @db.Decimal(10, 2)
+
+  compra   Compra   @relation(fields: [compraId], references: [id], onDelete: Cascade)
+  producto Producto @relation(fields: [productoId], references: [id])
+
+  @@map("detalles_compra")
+}

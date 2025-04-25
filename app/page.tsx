@@ -1,5 +1,5 @@
-import Footer from "@/components/inicio/footer";
-import Header from "@/components/inicio/header";
+import Footer from "@/componentes/inicio/footer";
+import Header from "@/componentes/inicio/header";
 
 export const metadata = {
   title: "Home",

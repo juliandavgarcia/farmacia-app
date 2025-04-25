@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
+import { Button } from "@/componentes/ui/button";
 import { BotonTema } from "../tema/boton-tema";
 import { NombreAplicacion } from "@/lib/env";
 
