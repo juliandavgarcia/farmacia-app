@@ -75,14 +75,13 @@ model Categoria {
 }
 
 model Proveedor {
-  id        String     @id @default(cuid())
+  id        String   @id @default(cuid())
   nombre    String
-  nit       String     @unique
+  nit       String   @unique
   direccion String?
   telefono  String?
   correo    String?
   contacto  String?
-  productos Producto[]
   compras   Compra[]
 
   @@map("proveedores")
@@ -96,16 +95,11 @@ model Producto {
   registroInvima String? @map("registro_invima")
   precioCompra   Decimal @map("precio_compra") @db.Decimal(10, 2)
   precioVenta    Decimal @map("precio_venta") @db.Decimal(10, 2)
-  stock          Int     @default(0)
-  stockMinimo    Int     @default(5) @map("stock_minimo")
-  requiereReceta Boolean @default(false) @map("requiere_receta")
+  unidadMedida   String  @map("unidad_medida")
   estado         Boolean @default(true)
 
   categoriaId String    @map("categoria_id")
   categoria   Categoria @relation(fields: [categoriaId], references: [id])
-
-  proveedorId String?    @map("proveedor_id")
-  proveedor   Proveedor? @relation(fields: [proveedorId], references: [id])
 
   lotes          Lote[]
   detallesVenta  DetalleVenta[]

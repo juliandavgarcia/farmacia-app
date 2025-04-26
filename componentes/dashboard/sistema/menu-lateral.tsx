@@ -31,13 +31,13 @@ const items = [
   },
   {
     title: "Productos",
-    url: "/dashboard/products",
+    url: "/dashboard/productos",
     icon: FaListAlt,
     allowedRoles: ["USER", "ADMIN"],
   },
   {
     title: "Categorías",
-    url: "/dashboard/categories",
+    url: "/dashboard/categorias",
     icon: FaBook,
     allowedRoles: ["ADMIN"],
   },
@@ -80,8 +80,6 @@ const items = [
 ];
 
 export async function MenuLateral() {
-  const appName = process.env.NEXT_PUBLIC_APP_NAME;
-
   const session = await auth();
   const userRole = session?.user?.rol;
 
@@ -90,13 +88,12 @@ export async function MenuLateral() {
   );
 
   return (
-    <Sidebar>
+    <Sidebar collapsible="icon">
       <SidebarHeader className="h-16 border-b border-sidebar-border flex items-center justify-center">
         <div className="flex items-center gap-2">
           <div className="flex h-7 w-7 items-center justify-center rounded-md bg-primary text-primary-foreground">
             <GalleryVerticalEnd className="size-4" />
           </div>
-          <div className="text-2xl font-semibold">{appName}</div>
         </div>
       </SidebarHeader>
       <SidebarContent>
