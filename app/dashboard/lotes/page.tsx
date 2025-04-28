@@ -6,9 +6,9 @@ import {
 import GeneradorTitulo from "@/componentes/generadores/generador-titulo";
 
 export const metadata = {
-  title: "Categorías",
+  title: "Lotes de productos",
   description:
-    "Explorá las categorías disponibles en nuestro sistema farmacéutico.",
+    "Explorá llos lotes disponibles en nuestro sistema farmacéutico.",
 };
 
 const PaginaLotes = () => {

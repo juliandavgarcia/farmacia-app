@@ -11,6 +11,11 @@ import ReporteProductos from "@/componentes/reportes/reporte-productos";
 import ReporteProveedores from "@/componentes/reportes/reporte-proveedores";
 import ReporteVentas from "@/componentes/reportes/reporte-ventas";
 
+export const metadata = {
+  title: "Reportes",
+  description: "Aquí puedes ver los reportes del negocio.",
+};
+
 const PaginaReportes = () => {
   const tabs: TabItem[] = [
     {

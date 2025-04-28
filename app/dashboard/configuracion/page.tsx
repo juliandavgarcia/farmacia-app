@@ -4,6 +4,11 @@ import {
 } from "@/componentes/generadores/generador-pestaña";
 import GeneradorTitulo from "@/componentes/generadores/generador-titulo";
 
+export const metadata = {
+  title: "Configuración",
+  description: "Configuración de la aplicación para el usuario actual.",
+};
+
 const PaginaConfiguracion = () => {
   const tabs: TabItem[] = [
     {

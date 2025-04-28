@@ -6,9 +6,9 @@ import {
 import GeneradorTitulo from "@/componentes/generadores/generador-titulo";
 
 export const metadata = {
-  title: "Categorías",
+  title: "Productos",
   description:
-    "Explorá las categorías disponibles en nuestro sistema farmacéutico.",
+    "Explorá las productos disponibles en nuestro sistema farmacéutico.",
 };
 
 export default function PaginaProductos() {
@@ -29,7 +29,7 @@ export default function PaginaProductos() {
 
   return (
     <div className="mx-auto p-4">
-      <GeneradorTitulo title="Gestor de categorías de productos" />
+      <GeneradorTitulo title="Gestor de productos de productos" />
       <GeneradorPestaña tabs={tabs} />
     </div>
   );
