@@ -6,115 +6,255 @@ import {
   FaUsers,
   FaUserCog,
   FaCog,
+  FaBoxes,
+  FaFileAlt,
+  FaShoppingCart,
+  FaTruck,
+  FaClipboardList,
 } from "react-icons/fa";
+import { IconType } from "react-icons";
+import { Minus, Plus, GalleryVerticalEnd } from "lucide-react";
 
 import {
   Sidebar,
   SidebarContent,
-  SidebarGroup,
-  SidebarGroupContent,
-  SidebarGroupLabel,
   SidebarHeader,
   SidebarMenu,
-  SidebarMenuButton,
   SidebarMenuItem,
+  SidebarMenuButton,
+  SidebarMenuSub,
+  SidebarMenuSubItem,
+  SidebarMenuSubButton,
+  SidebarRail,
 } from "@/componentes/ui/sidebar";
-import { GalleryVerticalEnd } from "lucide-react";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/componentes/ui/collapsible";
 import { auth } from "@/auth";
+import { NombreAplicacion } from "@/lib/env";
 
-const items = [
+type UserRole = "USER" | "ADMIN" | "CAJERO" | "FARMACEUTICO";
+
+interface MenuItem {
+  title: string;
+  url: string;
+  icon: IconType;
+  allowedRoles: UserRole[];
+  isActive?: boolean;
+}
+
+interface MenuGroup {
+  group: string;
+  items: MenuItem[];
+}
+
+type MenuItemOrGroup = MenuItem | MenuGroup;
+
+const isMenuGroup = (item: MenuItemOrGroup): item is MenuGroup => {
+  return (item as MenuGroup).group !== undefined;
+};
+
+const items: MenuItemOrGroup[] = [
+  // Dashboard
   {
     title: "Inicio",
     url: "/dashboard",
     icon: FaHome,
-    allowedRoles: ["USER", "ADMIN"],
+    allowedRoles: ["USER", "ADMIN", "CAJERO", "FARMACEUTICO"],
   },
+
+  // Inventario - Grupo
   {
-    title: "Productos",
-    url: "/dashboard/productos",
-    icon: FaListAlt,
-    allowedRoles: ["USER", "ADMIN"],
+    group: "Inventario",
+    items: [
+      {
+        title: "Productos",
+        url: "/dashboard/productos",
+        icon: FaListAlt,
+        allowedRoles: ["USER", "ADMIN", "FARMACEUTICO"],
+      },
+      {
+        title: "Categorías",
+        url: "/dashboard/categorias",
+        icon: FaBook,
+        allowedRoles: ["ADMIN", "FARMACEUTICO"],
+      },
+      {
+        title: "Lotes",
+        url: "/dashboard/lotes",
+        icon: FaBoxes,
+        allowedRoles: ["ADMIN", "FARMACEUTICO"],
+      },
+    ],
   },
+
+  // Ventas - Grupo
   {
-    title: "Categorías",
-    url: "/dashboard/categorias",
-    icon: FaBook,
+    group: "Ventas",
+    items: [
+      {
+        title: "Nueva Venta",
+        url: "/dashboard/ventas/nueva",
+        icon: FaShoppingCart,
+        allowedRoles: ["USER", "ADMIN", "CAJERO"],
+      },
+      {
+        title: "Historial Ventas",
+        url: "/dashboard/ventas",
+        icon: FaChartBar,
+        allowedRoles: ["USER", "ADMIN"],
+      },
+      {
+        title: "Clientes",
+        url: "/dashboard/clientes",
+        icon: FaUsers,
+        allowedRoles: ["USER", "ADMIN", "CAJERO"],
+      },
+    ],
+  },
+
+  // Compras - Grupo
+  {
+    group: "Compras",
+    items: [
+      {
+        title: "Nueva Compra",
+        url: "/dashboard/compras/nueva",
+        icon: FaTruck,
+        allowedRoles: ["ADMIN", "FARMACEUTICO"],
+      },
+      {
+        title: "Historial Compras",
+        url: "/dashboard/compras",
+        icon: FaClipboardList,
+        allowedRoles: ["ADMIN"],
+      },
+      {
+        title: "Proveedores",
+        url: "/dashboard/proveedores",
+        icon: FaUsers,
+        allowedRoles: ["ADMIN", "FARMACEUTICO"],
+      },
+    ],
+  },
+
+  // Reportes
+  {
+    title: "Reportes",
+    url: "/dashboard/reportes",
+    icon: FaFileAlt,
     allowedRoles: ["ADMIN"],
   },
+
+  // Administración - Grupo
   {
-    title: "Clientes",
-    url: "/dashboard/clients",
-    icon: FaUsers,
-    allowedRoles: ["USER", "ADMIN"],
-  },
-  {
-    title: "Proveedores",
-    url: "/dashboard/suppliers",
-    icon: FaUsers,
-    allowedRoles: ["ADMIN"],
-  },
-  {
-    title: "Compras",
-    url: "/dashboard/purchases",
-    icon: FaChartBar,
-    allowedRoles: ["ADMIN"],
-  },
-  {
-    title: "Ventas",
-    url: "/dashboard/sales",
-    icon: FaChartBar,
-    allowedRoles: ["USER", "ADMIN"],
-  },
-  {
-    title: "Usuarios",
-    url: "/dashboard/users",
-    icon: FaUserCog,
-    allowedRoles: ["ADMIN"],
-  },
-  {
-    title: "Configuración",
-    url: "/dashboard/settings",
-    icon: FaCog,
-    allowedRoles: ["ADMIN"],
+    group: "Administración",
+    items: [
+      {
+        title: "Usuarios",
+        url: "/dashboard/usuarios",
+        icon: FaUserCog,
+        allowedRoles: ["ADMIN"],
+      },
+      {
+        title: "Configuración",
+        url: "/dashboard/configuracion",
+        icon: FaCog,
+        allowedRoles: ["ADMIN"],
+      },
+    ],
   },
 ];
 
-export async function MenuLateral() {
+export async function MenuLateral(): Promise<React.JSX.Element> {
   const session = await auth();
-  const userRole = session?.user?.rol;
-
-  const filteredItems = items.filter((item) =>
-    item.allowedRoles.includes(userRole)
-  );
+  const userRole = (session?.user?.rol as UserRole) || "USER";
 
   return (
-    <Sidebar collapsible="icon">
+    <Sidebar>
       <SidebarHeader className="h-16 border-b border-sidebar-border flex items-center justify-center">
         <div className="flex items-center gap-2">
           <div className="flex h-7 w-7 items-center justify-center rounded-md bg-primary text-primary-foreground">
             <GalleryVerticalEnd className="size-4" />
           </div>
+          <span className="font-semibold">{NombreAplicacion}</span>
         </div>
       </SidebarHeader>
-      <SidebarContent>
-        <SidebarGroup>
-          <SidebarGroupLabel>Administrar</SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              {filteredItems.map((item) => (
-                <SidebarMenuItem key={item.title}>
+      <SidebarContent className="p-1">
+        <SidebarMenu className="space-y-0">
+          {/* Renderizar todos los elementos */}
+          {items.map((item, index) => {
+            // Si es un elemento individual
+            if (!isMenuGroup(item)) {
+              if (!item.allowedRoles.includes(userRole)) {
+                return null;
+              }
+
+              return (
+                <SidebarMenuItem key={`item-${index}`}>
                   <SidebarMenuButton asChild className="hover:bg-primary/10">
-                    <a href={item.url}>
-                      <item.icon className="text-primary" />
+                    <a href={item.url} className="flex items-center">
+                      <item.icon className="mr-2 text-primary size-4" />
                       <span>{item.title}</span>
                     </a>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
-              ))}
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
+              );
+            }
+
+            // Si es un grupo
+            const filteredGroupItems = item.items.filter((subItem) =>
+              subItem.allowedRoles.includes(userRole)
+            );
+
+            if (filteredGroupItems.length === 0) {
+              return null;
+            }
+
+            return (
+              <Collapsible
+                key={`group-${index}`}
+                defaultOpen={index === 0} // Primer grupo abierto por defecto
+                className="group/collapsible border-b border-sidebar-border"
+              >
+                {/* Etiqueta del grupo */}
+                <CollapsibleTrigger asChild>
+                  <div className="px-3 py-2 text-xs font-medium text-muted-foreground flex items-center justify-between cursor-pointer hover:bg-secondary/50 hover:rounded-md">
+                    {item.group}
+                    <Plus className="ml-auto size-3 group-data-[state=open]/collapsible:hidden" />
+                    <Minus className="ml-auto size-3 group-data-[state=closed]/collapsible:hidden" />
+                  </div>
+                </CollapsibleTrigger>
+
+                <CollapsibleContent>
+                  <SidebarMenuSub>
+                    {/* Elementos del grupo */}
+                    {filteredGroupItems.map((subItem, subIndex) => (
+                      <SidebarMenuSubItem key={`subitem-${index}-${subIndex}`}>
+                        <SidebarMenuSubButton
+                          asChild
+                          className="hover:bg-primary/10"
+                        >
+                          <a
+                            href={subItem.url}
+                            className="flex items-center pl-2"
+                          >
+                            <subItem.icon className="mr-2 text-primary size-4" />
+                            <span>{subItem.title}</span>
+                          </a>
+                        </SidebarMenuSubButton>
+                      </SidebarMenuSubItem>
+                    ))}
+                  </SidebarMenuSub>
+                </CollapsibleContent>
+              </Collapsible>
+            );
+          })}
+        </SidebarMenu>
       </SidebarContent>
+      <SidebarRail />
     </Sidebar>
   );
 }
