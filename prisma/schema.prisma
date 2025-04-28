@@ -62,13 +62,10 @@ model TokenVerificacion {
   @@map("verification_tokens")
 }
 
-// Entidades básicas para el sistema farmacéutico
-
 model Categoria {
   id            String     @id @default(cuid())
   nombre        String     @unique
   descripcion   String?
-  esMedicamento Boolean    @default(false) @map("es_medicamento")
   productos     Producto[]
 
   @@map("categorias")

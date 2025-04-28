@@ -8,7 +8,7 @@ import { EsquemaCategoria } from "../esquemas/categoria";
 const prisma = new PrismaClient();
 
 type MensajeRespuesta = {
-  exito?: string;
+  success?: string;
   error?: string;
   datos?: any;
 };
@@ -50,7 +50,7 @@ export const crearCategoria = async (
       data: { ...datos, nombre },
     });
 
-    return { exito: MENSAJES.CREACION_EXITOSA, datos: nuevaCategoria };
+    return { success: MENSAJES.CREACION_EXITOSA, datos: nuevaCategoria };
   } catch (error) {
     console.error("Error al crear la categoría:", error);
     return { error: MENSAJES.ERROR_CREACION };
@@ -87,7 +87,7 @@ export const actualizarCategoria = async (
     });
 
     return {
-      exito: MENSAJES.ACTUALIZACION_EXITOSA,
+      success: MENSAJES.ACTUALIZACION_EXITOSA,
       datos: categoriaActualizada,
     };
   } catch (error) {
