@@ -20,6 +20,12 @@ const FormularioCategoria = () => {
       tipo: "text",
       placeholder: "Ej. Analgésicos",
       validacion: EsquemaCategoria.shape.nombre,
+    },    {
+      nombre: "descripcion",
+      label: "Descripción",
+      tipo: "text",
+      placeholder: "(Opcional)",
+      validacion: EsquemaCategoria.shape.descripcion,
     },
   ];
 
@@ -36,11 +42,11 @@ const FormularioCategoria = () => {
             texto: "Error",
             descripcion: response.error,
           });
-        } else if (response.exito) {
+        } else if (response.success) {
           GeneradorAlerta({
             tipo: "success",
             texto: "Éxito",
-            descripcion: response.exito,
+            descripcion: response.success,
           });
           setRestablecerFormulario(true);
         }
