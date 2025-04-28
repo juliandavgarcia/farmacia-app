@@ -17,7 +17,7 @@ export default function PaginaCategorias() {
     {
       valor: "register",
       label: "Registar",
-      icono: "User",
+      icono: "Book",
       contenido: <FormularioCategoria />,
     },
     {

@@ -1,17 +1,17 @@
 import {
-  FaHome,
-  FaChartBar,
-  FaListAlt,
-  FaBook,
-  FaUsers,
-  FaUserCog,
-  FaCog,
-  FaBoxes,
-  FaFileAlt,
-  FaShoppingCart,
-  FaTruck,
-  FaClipboardList,
-} from "react-icons/fa";
+  Home,
+  BarChart2,
+  ListOrdered,
+  Book,
+  Users,
+  UserCog,
+  Settings,
+  Boxes,
+  FileText,
+  ShoppingCart,
+  Truck,
+  ClipboardList,
+} from "lucide-react";
 import { IconType } from "react-icons";
 import { Minus, Plus, GalleryVerticalEnd } from "lucide-react";
 
@@ -61,7 +61,7 @@ const items: MenuItemOrGroup[] = [
   {
     title: "Inicio",
     url: "/dashboard",
-    icon: FaHome,
+    icon: Home,
     allowedRoles: ["USER", "ADMIN", "CAJERO", "FARMACEUTICO"],
   },
 
@@ -72,19 +72,19 @@ const items: MenuItemOrGroup[] = [
       {
         title: "Productos",
         url: "/dashboard/productos",
-        icon: FaListAlt,
+        icon: ListOrdered,
         allowedRoles: ["USER", "ADMIN", "FARMACEUTICO"],
       },
       {
         title: "Categorías",
         url: "/dashboard/categorias",
-        icon: FaBook,
+        icon: Book,
         allowedRoles: ["ADMIN", "FARMACEUTICO"],
       },
       {
         title: "Lotes",
         url: "/dashboard/lotes",
-        icon: FaBoxes,
+        icon: Boxes,
         allowedRoles: ["ADMIN", "FARMACEUTICO"],
       },
     ],
@@ -97,19 +97,19 @@ const items: MenuItemOrGroup[] = [
       {
         title: "Nueva Venta",
         url: "/dashboard/ventas/nueva",
-        icon: FaShoppingCart,
+        icon: ShoppingCart,
         allowedRoles: ["USER", "ADMIN", "CAJERO"],
       },
       {
         title: "Historial Ventas",
         url: "/dashboard/ventas",
-        icon: FaChartBar,
+        icon: BarChart2,
         allowedRoles: ["USER", "ADMIN"],
       },
       {
         title: "Clientes",
         url: "/dashboard/clientes",
-        icon: FaUsers,
+        icon: Users,
         allowedRoles: ["USER", "ADMIN", "CAJERO"],
       },
     ],
@@ -122,19 +122,19 @@ const items: MenuItemOrGroup[] = [
       {
         title: "Nueva Compra",
         url: "/dashboard/compras/nueva",
-        icon: FaTruck,
+        icon: Truck,
         allowedRoles: ["ADMIN", "FARMACEUTICO"],
       },
       {
         title: "Historial Compras",
         url: "/dashboard/compras",
-        icon: FaClipboardList,
+        icon: ClipboardList,
         allowedRoles: ["ADMIN"],
       },
       {
         title: "Proveedores",
         url: "/dashboard/proveedores",
-        icon: FaUsers,
+        icon: Users,
         allowedRoles: ["ADMIN", "FARMACEUTICO"],
       },
     ],
@@ -144,7 +144,7 @@ const items: MenuItemOrGroup[] = [
   {
     title: "Reportes",
     url: "/dashboard/reportes",
-    icon: FaFileAlt,
+    icon: FileText,
     allowedRoles: ["ADMIN"],
   },
 
@@ -155,13 +155,13 @@ const items: MenuItemOrGroup[] = [
       {
         title: "Usuarios",
         url: "/dashboard/usuarios",
-        icon: FaUserCog,
+        icon: UserCog,
         allowedRoles: ["ADMIN"],
       },
       {
         title: "Configuración",
         url: "/dashboard/configuracion",
-        icon: FaCog,
+        icon: Settings,
         allowedRoles: ["ADMIN"],
       },
     ],

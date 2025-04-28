@@ -1,4 +1,4 @@
-import FormularioProducto from "@/componentes/dashboard/productos/formulario-producto";
+import FormularioLote from "@/componentes/dashboard/lotes/formulario-lote";
 import {
   GeneradorPestaña,
   TabItem,
@@ -11,13 +11,13 @@ export const metadata = {
     "Explorá las categorías disponibles en nuestro sistema farmacéutico.",
 };
 
-export default function PaginaProductos() {
+const PaginaLotes = () => {
   const tabs: TabItem[] = [
     {
       valor: "register",
       label: "Registar",
-      icono: "ListOrdered",
-      contenido: <FormularioProducto />,
+      icono: "Boxes",
+      contenido: <FormularioLote />,
     },
     {
       valor: "consult",
@@ -29,8 +29,10 @@ export default function PaginaProductos() {
 
   return (
     <div className="mx-auto p-4">
-      <GeneradorTitulo title="Gestor de categorías de productos" />
+      <GeneradorTitulo title="Gestor de lotes de productos" />
       <GeneradorPestaña tabs={tabs} />
     </div>
   );
-}
+};
+
+export default PaginaLotes;
