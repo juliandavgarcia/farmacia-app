@@ -36,11 +36,11 @@ const FormularioCategoria = () => {
             texto: "Error",
             descripcion: response.error,
           });
-        } else if (response.exito) {
+        } else if (response.success) {
           GeneradorAlerta({
             tipo: "success",
             texto: "Éxito",
-            descripcion: response.exito,
+            descripcion: response.success,
           });
           setRestablecerFormulario(true);
         }

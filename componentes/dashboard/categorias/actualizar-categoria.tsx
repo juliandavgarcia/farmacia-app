@@ -14,7 +14,7 @@ import {
 } from "@/componentes/ui/dialog";
 
 interface CategoryUpdateProps {
-  onUpdate: (data: { name: string }) => Promise<{
+  onUpdate: (data: { nombre: string }) => Promise<{
     success?: string;
     error?: string;
   }>;
@@ -35,7 +35,7 @@ const ActualizarCategoria = ({
     e.preventDefault();
     setIsUpdating(true);
 
-    const response = await onUpdate({ name });
+    const response = await onUpdate({ nombre: name });
 
     if (response.success) {
       setIsDialogOpen(false);

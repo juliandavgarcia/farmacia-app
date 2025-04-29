@@ -21,8 +21,8 @@ const FormularioProducto = () => {
   useEffect(() => {
     const cargarCategorias = async () => {
       const resultado = await obtenerCategorias();
-      if (resultado?.datos) {
-        const opcionesFormateadas = resultado.datos.map((cat: Categoria) => ({
+      if (resultado?.data) {
+        const opcionesFormateadas = resultado.data.map((cat: Categoria) => ({
           value: cat.id,
           label: cat.nombre,
         }));
