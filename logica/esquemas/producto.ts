@@ -5,6 +5,7 @@ export const EsquemaProducto = z.object({
   nombre: z.string().min(1, { message: "El nombre del producto es requerido" }),
   descripcion: z.string().optional(),
   codigoBarras: z.string().optional(),
+  categoriaNombre: z.string().optional(),
   registroInvima: z.string().optional(),
   precioCompra: z.coerce
     .number()
