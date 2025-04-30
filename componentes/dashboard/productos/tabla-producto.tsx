@@ -11,6 +11,7 @@ import {
 } from "@/logica/acciones/acciones-producto";
 import { Producto } from "@/logica/esquemas/producto"; // Asegúrate que este esquema incluya `categoriaNombre`
 import ActualizarProducto from "./actualizar-producto";
+import GeneradorExcel from "@/componentes/generadores/generador-excel";
 
 const productColumns = (fetchProductos: () => void): ColumnDef<Producto>[] => [
   {
@@ -121,6 +122,13 @@ const TablaProducto = () => {
     fetchProductos();
   }, []);
 
+  const columnasExcel = [
+    { key: "nombre", header: "Nombre" },
+    { key: "descripcion", header: "Descripción" },
+    { key: "precioVenta", header: "Precio de Venta" },
+    { key: "categoriaNombre", header: "Categoría" },
+  ];
+
   if (loading) return <div>Cargando...</div>;
 
   return (
@@ -129,6 +137,13 @@ const TablaProducto = () => {
         data={data}
         columns={productColumns(fetchProductos)}
         filterableColumns={["nombre", "categoriaNombre"]}
+      />
+
+      <GeneradorExcel
+        data={data}
+        columns={columnasExcel}
+        fileName="productos"
+        headerTitle="Listado de Productos"
       />
     </div>
   );
