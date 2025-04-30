@@ -10,44 +10,25 @@ import {
 import { Categoria } from "@/logica/esquemas/categoria";
 import { ColumnDef } from "@tanstack/react-table";
 import { useEffect, useState } from "react";
-import { GoQuestion } from "react-icons/go";
 import ActualizarCategoria from "./actualizar-categoria";
 
 const categoryColumns = (
   fetchCategories: () => void
 ): ColumnDef<Categoria>[] => [
   {
-    accessorKey: "name",
+    accessorKey: "nombre",
     header: "Nombre",
     cell: ({ row }) => (
-      <span className="font-semibold">{row.getValue("name")}</span>
+      <span className="font-semibold">{row.getValue("nombre")}</span>
     ),
   },
   {
-    accessorKey: "createdAt",
-    header: "Creado",
-    cell: ({ row }) => (
-      <span>
-        {row.getValue("createdAt") ? (
-          new Date(row.getValue("createdAt")).toLocaleDateString()
-        ) : (
-          <GoQuestion className="text-red-700 h-5 w-5" />
-        )}
-      </span>
-    ),
-  },
-  {
-    accessorKey: "updatedAt",
-    header: "Actualizado",
-    cell: ({ row }) => (
-      <span>
-        {row.getValue("updatedAt") ? (
-          new Date(row.getValue("updatedAt")).toLocaleDateString()
-        ) : (
-          <GoQuestion className="text-red-700 h-5 w-5" />
-        )}
-      </span>
-    ),
+    accessorKey: "descripcion",
+    header: "Descripción",
+    cell: ({ row }) => {
+      const descripcion: string = row.getValue("descripcion") as string;
+      return <span>{descripcion ? descripcion : "No hay descripción"}</span>;
+    },
   },
   {
     id: "actions",
@@ -55,11 +36,13 @@ const categoryColumns = (
     cell: ({ row }) => {
       const categoria = row.original;
 
-      const handleUpdate = async (data: { nombre: string }) => {
+      const handleUpdate = async (data: {
+        nombre: string;
+        descripcion: string;
+      }) => {
         return actualizarCategoria(categoria.id || "", {
           nombre: data.nombre,
-          esMedicamento: categoria.esMedicamento,
-          descripcion: categoria.descripcion,
+          descripcion: data.descripcion,
         });
       };
 
@@ -68,6 +51,7 @@ const categoryColumns = (
           <ActualizarCategoria
             onUpdate={handleUpdate}
             initialName={categoria.nombre}
+            initialDescription={categoria.descripcion || ""}
             refreshData={fetchCategories}
           />
           <GeneradorEliminar
@@ -93,11 +77,19 @@ const TablaCategoria = () => {
   const fetchCategories = async () => {
     try {
       const response = await obtenerCategorias();
-      if (response.data) {
-        setData(response.data);
+      if (response && Array.isArray(response)) {
+        setData(response);
+      } else if (response && response.datos) {
+        setData(response.datos);
+      } else if (response) {
+        setData(response.datos);
+      } else {
+        console.error("Unexpected response format:", response);
+        setData([]);
       }
     } catch (error) {
       console.error("Error al obtener categorías:", error);
+      setData([]);
     } finally {
       setLoading(false);
     }
@@ -114,7 +106,7 @@ const TablaCategoria = () => {
       <GeneradorTabla
         data={data}
         columns={categoryColumns(fetchCategories)}
-        filterableColumns={["name"]}
+        filterableColumns={["nombre"]}
       />
     </div>
   );

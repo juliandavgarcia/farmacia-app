@@ -14,28 +14,31 @@ import {
 } from "@/componentes/ui/dialog";
 
 interface CategoryUpdateProps {
-  onUpdate: (data: { nombre: string }) => Promise<{
+  onUpdate: (data: { nombre: string; descripcion: string }) => Promise<{
     success?: string;
     error?: string;
   }>;
   initialName: string;
+  initialDescription: string;
   refreshData: () => void;
 }
 
 const ActualizarCategoria = ({
   onUpdate,
   initialName,
+  initialDescription,
   refreshData,
 }: CategoryUpdateProps) => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [name, setName] = useState(initialName);
+  const [nombre, setNombre] = useState(initialName);
+  const [descripcion, setDescription] = useState(initialDescription);
   const [isUpdating, setIsUpdating] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsUpdating(true);
 
-    const response = await onUpdate({ nombre: name });
+    const response = await onUpdate({ nombre, descripcion });
 
     if (response.success) {
       setIsDialogOpen(false);
@@ -70,16 +73,29 @@ const ActualizarCategoria = ({
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label
-              htmlFor="name"
+              htmlFor="nombre"
               className="block text-sm font-medium text-gray-700"
             >
               Nombre
             </label>
             <Input
-              id="name"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
+              id="nombre"
+              value={nombre}
+              onChange={(e) => setNombre(e.target.value)}
               required
+            />
+          </div>
+          <div>
+            <label
+              htmlFor="descripcion"
+              className="block text-sm font-medium text-gray-700"
+            >
+              Descripción
+            </label>
+            <Input
+              id="descripcion"
+              value={descripcion}
+              onChange={(e) => setDescription(e.target.value)}
             />
           </div>
           <div className="flex justify-end space-x-2">

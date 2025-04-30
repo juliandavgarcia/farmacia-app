@@ -6,7 +6,6 @@ export const EsquemaCategoria = z.object({
     .string()
     .min(1, { message: "El nombre de la categoría es requerido" }),
   descripcion: z.string().optional(),
-  esMedicamento: z.boolean().default(false),
 });
 
 export type Categoria = z.infer<typeof EsquemaCategoria>;

@@ -20,6 +20,12 @@ const FormularioCategoria = () => {
       tipo: "text",
       placeholder: "Ej. Analgésicos",
       validacion: EsquemaCategoria.shape.nombre,
+    },    {
+      nombre: "descripcion",
+      label: "Descripción",
+      tipo: "text",
+      placeholder: "(Opcional)",
+      validacion: EsquemaCategoria.shape.descripcion,
     },
   ];
 

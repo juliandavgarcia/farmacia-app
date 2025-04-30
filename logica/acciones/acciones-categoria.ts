@@ -50,7 +50,8 @@ export const crearCategoria = async (
       data: { ...datos, nombre },
     });
 
-    return { success: MENSAJES.CREACION_EXITOSA, data: nuevaCategoria };
+    return { success: MENSAJES.CREACION_EXITOSA, datos: nuevaCategoria };
+
   } catch (error) {
     console.error("Error al crear la categoría:", error);
     return { error: MENSAJES.ERROR_CREACION };
@@ -88,7 +89,7 @@ export const actualizarCategoria = async (
 
     return {
       success: MENSAJES.ACTUALIZACION_EXITOSA,
-      data: categoriaActualizada,
+      datos: categoriaActualizada,
     };
   } catch (error) {
     console.error("Error al actualizar la categoría:", error);
