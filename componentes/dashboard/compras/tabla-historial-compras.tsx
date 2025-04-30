@@ -1,6 +1,7 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 "use client";
 
+import GeneradorExcel from "@/componentes/generadores/generador-excel";
 import { GeneradorTabla } from "@/componentes/generadores/generador-tabla";
 import { Button } from "@/componentes/ui/button";
 import {
@@ -105,6 +106,13 @@ const TablaHistorialCompras = () => {
     fetchHistorial();
   }, []);
 
+  const excelColumns = [
+    { key: "numeroFactura", header: "Factura" },
+    { key: "fecha", header: "Fecha" },
+    { key: "proveedor", header: "Proveedor" },
+    { key: "total", header: "Total" },
+  ];
+
   if (loading) return <div>Cargando historial de compras...</div>;
 
   return (
@@ -113,6 +121,13 @@ const TablaHistorialCompras = () => {
         data={data}
         columns={historialCompraColumns}
         filterableColumns={["numeroFactura", "proveedor"]}
+      />
+
+      <GeneradorExcel
+        data={data}
+        columns={excelColumns}
+        fileName="historial_compras"
+        headerTitle="Historial de Compras"
       />
     </div>
   );
