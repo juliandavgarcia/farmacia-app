@@ -62,7 +62,7 @@ const ActualizarCategoria = ({
   return (
     <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline" className="h-8 w-8" size="icon">
+        <Button variant="edit" className="h-8 w-8" size="icon">
           <FiEdit2 />
         </Button>
       </DialogTrigger>
@@ -106,7 +106,7 @@ const ActualizarCategoria = ({
             >
               Cancelar
             </Button>
-            <Button type="submit" disabled={isUpdating}>
+            <Button type="submit" disabled={isUpdating} variant="edit">
               {isUpdating ? "Actualizando..." : "Actualizar"}
             </Button>
           </div>
