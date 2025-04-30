@@ -217,7 +217,7 @@ export async function MenuLateral(): Promise<React.JSX.Element> {
               <Collapsible
                 key={`group-${index}`}
                 defaultOpen={index === 0} // Primer grupo abierto por defecto
-                className="group/collapsible border-b border-sidebar-border"
+                className="group/collapsible"
               >
                 {/* Etiqueta del grupo */}
                 <CollapsibleTrigger asChild>

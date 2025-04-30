@@ -10,7 +10,7 @@ const prisma = new PrismaClient();
 type MensajeRespuesta = {
   success?: string;
   error?: string;
-  datos?: any;
+  data?: any;
 };
 
 const MENSAJES = {
@@ -51,6 +51,7 @@ export const crearCategoria = async (
     });
 
     return { success: MENSAJES.CREACION_EXITOSA, datos: nuevaCategoria };
+
   } catch (error) {
     console.error("Error al crear la categoría:", error);
     return { error: MENSAJES.ERROR_CREACION };
@@ -126,7 +127,7 @@ export const obtenerCategoriaPorId = async (
     if (!categoria) {
       return { error: MENSAJES.NO_ENCONTRADA };
     }
-    return { datos: categoria };
+    return { data: categoria };
   } catch (error) {
     console.error("Error al obtener la categoría:", error);
     return { error: MENSAJES.NO_ENCONTRADA };
@@ -136,7 +137,7 @@ export const obtenerCategoriaPorId = async (
 export const obtenerCategorias = async (): Promise<MensajeRespuesta> => {
   try {
     const categorias = await prisma.categoria.findMany();
-    return { datos: categorias };
+    return { data: categorias };
   } catch (error) {
     console.error("Error al obtener las categorías:", error);
     return { error: MENSAJES.NO_ENCONTRADA };

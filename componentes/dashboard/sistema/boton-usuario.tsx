@@ -35,7 +35,7 @@ export function BotonUsuario({ usuario }: PropiedadesBotonPerfil) {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="outline" size="icon">
+        <Button variant="done" size="icon">
           <User />
         </Button>
       </DropdownMenuTrigger>

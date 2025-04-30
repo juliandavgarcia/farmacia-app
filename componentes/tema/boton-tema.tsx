@@ -15,7 +15,7 @@ export function BotonTema() {
 
   if (!mounted) {
     return (
-      <Button size="icon" variant="outline" aria-label="Toggle theme" disabled>
+      <Button size="icon" variant="done" aria-label="Toggle theme" disabled>
         <Loader2 className="h-4 w-4 animate-spin" />
       </Button>
     );
@@ -24,7 +24,7 @@ export function BotonTema() {
   return (
     <Button
       size="icon"
-      variant="outline"
+      variant="done"
       onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
       aria-label="Toggle theme"
     >
