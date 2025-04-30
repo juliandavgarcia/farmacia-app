@@ -1,4 +1,5 @@
 import FormularioProducto from "@/componentes/dashboard/productos/formulario-producto";
+import TablaProducto from "@/componentes/dashboard/productos/tabla-producto";
 import {
   GeneradorPestaña,
   TabItem,
@@ -23,7 +24,7 @@ export default function PaginaProductos() {
       valor: "consult",
       label: "Consultar",
       icono: "Search",
-      contenido: <></>,
+      contenido: <TablaProducto />,
     },
   ];
 
