@@ -11,6 +11,7 @@ import { Categoria } from "@/logica/esquemas/categoria";
 import { ColumnDef } from "@tanstack/react-table";
 import { useEffect, useState } from "react";
 import ActualizarCategoria from "./actualizar-categoria";
+import GeneradorExcel from "@/componentes/generadores/generador-excel";
 
 const categoryColumns = (
   fetchCategories: () => void
@@ -79,10 +80,10 @@ const TablaCategoria = () => {
       const response = await obtenerCategorias();
       if (response && Array.isArray(response)) {
         setData(response);
-      } else if (response && response.datos) {
-        setData(response.datos);
+      } else if (response && response.data) {
+        setData(response.data);
       } else if (response) {
-        setData(response.datos);
+        setData(response.data);
       } else {
         console.error("Unexpected response format:", response);
         setData([]);
@@ -99,6 +100,11 @@ const TablaCategoria = () => {
     fetchCategories();
   }, []);
 
+  const columnasExcel = [
+    { key: "nombre", header: "Nombre" },
+    { key: "descripcion", header: "Descripción" },
+  ];
+
   if (loading) return <div>Cargando...</div>;
 
   return (
@@ -107,6 +113,13 @@ const TablaCategoria = () => {
         data={data}
         columns={categoryColumns(fetchCategories)}
         filterableColumns={["nombre"]}
+      />
+
+      <GeneradorExcel
+        data={data}
+        columns={columnasExcel}
+        fileName="categorias"
+        headerTitle="Listado de Categorías"
       />
     </div>
   );
