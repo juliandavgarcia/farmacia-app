@@ -185,12 +185,24 @@ export const obtenerProductosActivos = async (): Promise<RespuestaProducto> => {
         id: true,
         nombre: true,
         descripcion: true,
-        precioVenta: true,
-        categoriaId: true,
+        precioVenta: true, // Este campo es de tipo Decimal
+        categoria: {
+          select: {
+            nombre: true,
+          },
+        },
       },
     });
 
-    return { datos: productos };
+    // Convertimos el precioVenta de Decimal a number directamente
+    const productosConCategoriaNombre = productos.map((producto) => ({
+      ...producto,
+      precioVenta: producto.precioVenta.toNumber(), // Convertir Decimal a number
+      categoriaNombre: producto.categoria.nombre,
+      categoria: undefined, // Eliminamos el objeto complejo
+    }));
+
+    return { datos: productosConCategoriaNombre };
   } catch (error) {
     console.error("Error al obtener los productos activos:", error);
     return { error: MENSAJES.NO_ENCONTRADO };
