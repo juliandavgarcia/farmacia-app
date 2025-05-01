@@ -15,6 +15,8 @@ export const EsquemaLote = z.object({
     .int("Debe ser un número entero")
     .min(0, "No puede ser negativo")
     .optional(),
+  creadoEn: z.date().optional(),
+  actualizadoEn: z.date().optional(),
 });
 
 export type Lote = z.infer<typeof EsquemaLote>;

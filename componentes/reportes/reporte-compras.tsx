@@ -1,3 +1,4 @@
+import ContadorCompra from "../dashboard/compras/contador-compra";
 import {
   Card,
   CardContent,
@@ -14,7 +15,7 @@ const ReporteCompras = () => {
         <CardDescription>Descripción del reporte de compras</CardDescription>
       </CardHeader>
       <CardContent>
-        <p>Contenido del reporte de compras</p>
+        <ContadorCompra />
       </CardContent>
     </Card>
   );

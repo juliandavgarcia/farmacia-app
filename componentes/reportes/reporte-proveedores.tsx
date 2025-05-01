@@ -1,3 +1,4 @@
+import ContadorProveedor from "../dashboard/proveedores/contador-proveedor";
 import {
   Card,
   CardContent,
@@ -16,7 +17,7 @@ const ReporteProveedores = () => {
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <p>Contenido del reporte de proveedores</p>
+        <ContadorProveedor />
       </CardContent>
     </Card>
   );

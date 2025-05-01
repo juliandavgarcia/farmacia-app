@@ -1,3 +1,4 @@
+import ContadorLote from "../dashboard/lotes/contador-lote";
 import {
   Card,
   CardContent,
@@ -14,7 +15,7 @@ const ReporteLotes = () => {
         <CardDescription>Descripción del reporte de lotes</CardDescription>
       </CardHeader>
       <CardContent>
-        <p>Contenido del reporte de lotes</p>
+        <ContadorLote />
       </CardContent>
     </Card>
   );

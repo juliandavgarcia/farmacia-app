@@ -19,6 +19,8 @@ export const EsquemaProducto = z.object({
   estado: z.coerce
     .boolean({ invalid_type_error: "Debe seleccionar si está activo o no" })
     .default(true),
+  creadoEn: z.date().optional(),
+  actualizadoEn: z.date().optional(),
   categoriaId: z.string().min(1, { message: "La categoría es requerida" }),
 });
 

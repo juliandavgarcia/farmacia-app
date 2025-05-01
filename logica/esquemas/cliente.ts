@@ -7,6 +7,8 @@ export const EsquemaCliente = z.object({
   telefono: z.string().optional(),
   direccion: z.string().optional(),
   correo: z.string().email("Debe ser un correo válido").optional(),
+  creadoEn: z.date().optional(),
+  actualizadoEn: z.date().optional(),
 });
 
 export type Cliente = z.infer<typeof EsquemaCliente>;

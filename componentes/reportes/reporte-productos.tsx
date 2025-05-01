@@ -1,3 +1,4 @@
+import ContadorProducto from "../dashboard/productos/contador-producto";
 import {
   Card,
   CardContent,
@@ -14,7 +15,7 @@ const ReporteProductos = () => {
         <CardDescription>Descripción del reporte de productos</CardDescription>
       </CardHeader>
       <CardContent>
-        <p>Contenido del reporte de productos</p>
+        <ContadorProducto />
       </CardContent>
     </Card>
   );

@@ -1,3 +1,4 @@
+import ContadorVenta from "../dashboard/ventas/contador-venta";
 import {
   Card,
   CardContent,
@@ -14,7 +15,7 @@ const ReporteVentas = () => {
         <CardDescription>Descripción del reporte de ventas</CardDescription>
       </CardHeader>
       <CardContent>
-        <p>Contenido del reporte de ventas</p>
+        <ContadorVenta />
       </CardContent>
     </Card>
   );

@@ -50,8 +50,7 @@ export const crearCategoria = async (
       data: { ...datos, nombre },
     });
 
-    return { success: MENSAJES.CREACION_EXITOSA, datos: nuevaCategoria };
-
+    return { success: MENSAJES.CREACION_EXITOSA, data: nuevaCategoria };
   } catch (error) {
     console.error("Error al crear la categoría:", error);
     return { error: MENSAJES.ERROR_CREACION };
@@ -89,7 +88,7 @@ export const actualizarCategoria = async (
 
     return {
       success: MENSAJES.ACTUALIZACION_EXITOSA,
-      datos: categoriaActualizada,
+      data: categoriaActualizada,
     };
   } catch (error) {
     console.error("Error al actualizar la categoría:", error);
@@ -141,5 +140,89 @@ export const obtenerCategorias = async (): Promise<MensajeRespuesta> => {
   } catch (error) {
     console.error("Error al obtener las categorías:", error);
     return { error: MENSAJES.NO_ENCONTRADA };
+  }
+};
+
+export const obtenerCantidadCategorias =
+  async (): Promise<MensajeRespuesta> => {
+    try {
+      const cantidad = await prisma.categoria.count();
+      return { data: cantidad };
+    } catch (error) {
+      console.error("Error al obtener la cantidad total de categorías:", error);
+      return { error: "Error al obtener la cantidad total de categorías." };
+    }
+  };
+
+export const obtenerCategoriasHoy = async (): Promise<MensajeRespuesta> => {
+  const hoy = new Date();
+  const inicioDia = new Date(hoy.setHours(0, 0, 0, 0)); // Comienzo de hoy
+
+  try {
+    const cantidadHoy = await prisma.categoria.count({
+      where: {
+        creadoEn: {
+          gte: inicioDia, // Mayor o igual a la fecha de inicio del día
+        },
+      },
+    });
+    return { data: cantidadHoy };
+  } catch (error) {
+    console.error(
+      "Error al obtener la cantidad de categorías registradas hoy:",
+      error
+    );
+    return {
+      error: "Error al obtener la cantidad de categorías registradas hoy.",
+    };
+  }
+};
+
+export const obtenerCategoriasSemana = async (): Promise<MensajeRespuesta> => {
+  const hoy = new Date();
+  const inicioSemana = new Date(hoy.setDate(hoy.getDate() - hoy.getDay())); // Comienzo de la semana (lunes)
+
+  try {
+    const cantidadSemana = await prisma.categoria.count({
+      where: {
+        creadoEn: {
+          gte: inicioSemana, // Mayor o igual a la fecha de inicio de la semana
+        },
+      },
+    });
+    return { data: cantidadSemana };
+  } catch (error) {
+    console.error(
+      "Error al obtener la cantidad de categorías registradas esta semana:",
+      error
+    );
+    return {
+      error:
+        "Error al obtener la cantidad de categorías registradas esta semana.",
+    };
+  }
+};
+
+export const obtenerCategoriasMes = async (): Promise<MensajeRespuesta> => {
+  const hoy = new Date();
+  const inicioMes = new Date(hoy.getFullYear(), hoy.getMonth(), 1); // Primer día del mes
+
+  try {
+    const cantidadMes = await prisma.categoria.count({
+      where: {
+        creadoEn: {
+          gte: inicioMes, // Mayor o igual al primer día del mes
+        },
+      },
+    });
+    return { data: cantidadMes };
+  } catch (error) {
+    console.error(
+      "Error al obtener la cantidad de categorías registradas este mes:",
+      error
+    );
+    return {
+      error: "Error al obtener la cantidad de categorías registradas este mes.",
+    };
   }
 };

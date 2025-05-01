@@ -66,34 +66,40 @@ model Categoria {
   id            String     @id @default(cuid())
   nombre        String     @unique
   descripcion   String?
+  creadoEn      DateTime   @default(now()) @map("created_at")
+  actualizadoEn DateTime   @updatedAt @map("updated_at")
   productos     Producto[]
 
   @@map("categorias")
 }
 
 model Proveedor {
-  id        String   @id @default(cuid())
-  nombre    String
-  nit       String   @unique
-  direccion String?
-  telefono  String?
-  correo    String?
-  contacto  String?
-  compras   Compra[]
+  id            String   @id @default(cuid())
+  nombre        String
+  nit           String   @unique
+  direccion     String?
+  telefono      String?
+  correo        String?
+  contacto      String?
+  creadoEn      DateTime @default(now()) @map("created_at")
+  actualizadoEn DateTime @updatedAt @map("updated_at")
+  compras       Compra[]
 
   @@map("proveedores")
 }
 
 model Producto {
-  id             String  @id @default(cuid())
+  id             String   @id @default(cuid())
   nombre         String
   descripcion    String?
-  codigoBarras   String? @unique @map("codigo_barras")
-  registroInvima String? @map("registro_invima")
-  precioCompra   Decimal @map("precio_compra") @db.Decimal(10, 2)
-  precioVenta    Decimal @map("precio_venta") @db.Decimal(10, 2)
-  unidadMedida   String  @map("unidad_medida")
-  estado         Boolean @default(true)
+  codigoBarras   String?  @unique @map("codigo_barras")
+  registroInvima String?  @map("registro_invima")
+  precioCompra   Decimal  @map("precio_compra") @db.Decimal(10, 2)
+  precioVenta    Decimal  @map("precio_venta") @db.Decimal(10, 2)
+  unidadMedida   String   @map("unidad_medida")
+  estado         Boolean  @default(true)
+  creadoEn       DateTime @default(now()) @map("created_at")
+  actualizadoEn  DateTime @updatedAt @map("updated_at")
 
   categoriaId String    @map("categoria_id")
   categoria   Categoria @relation(fields: [categoriaId], references: [id])
@@ -112,6 +118,8 @@ model Lote {
   fechaVencimiento DateTime @map("fecha_vencimiento")
   cantidad         Int
   disponible       Int      @default(0)
+  creadoEn         DateTime @default(now()) @map("created_at")
+  actualizadoEn    DateTime @updatedAt @map("updated_at")
 
   producto      Producto       @relation(fields: [productoId], references: [id])
   detallesVenta DetalleVenta[]
@@ -120,13 +128,15 @@ model Lote {
 }
 
 model Cliente {
-  id        String  @id @default(cuid())
-  documento String  @unique
-  nombre    String
-  telefono  String?
-  direccion String?
-  correo    String?
-  ventas    Venta[]
+  id            String   @id @default(cuid())
+  documento     String   @unique
+  nombre        String
+  telefono      String?
+  direccion     String?
+  correo        String?
+  ventas        Venta[]
+  creadoEn      DateTime @default(now()) @map("created_at")
+  actualizadoEn DateTime @updatedAt @map("updated_at")
 
   @@map("clientes")
 }
