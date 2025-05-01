@@ -20,6 +20,8 @@ export const EsquemaUsuario = z
       invalid_type_error: "El rol debe ser USUARIO o ADMINISTRADOR",
     }),
     estado: z.boolean().default(true).optional(),
+    creadoEn: z.date().optional(), 
+    actualizadoEn: z.date().optional(), 
   })
   .refine((data) => data.contrasena === data.confirmarContrasena, {
     message: "Las contraseñas no coinciden",

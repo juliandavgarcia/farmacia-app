@@ -1,3 +1,4 @@
+import ContadorCategoria from "../dashboard/categorias/contador-categoria";
 import {
   Card,
   CardContent,
@@ -14,7 +15,7 @@ const ReporteCategorias = () => {
         <CardDescription>Descripción del reporte de categorías</CardDescription>
       </CardHeader>
       <CardContent>
-        <p>Contenido del reporte de categorías</p>
+        <ContadorCategoria />
       </CardContent>
     </Card>
   );

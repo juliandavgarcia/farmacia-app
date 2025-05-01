@@ -5,6 +5,7 @@ import {
   CardHeader,
   CardTitle,
 } from "../ui/card";
+import ContadorCliente from "../dashboard/clientes/contador-cliente";
 
 const ReporteClientes = () => {
   return (
@@ -14,7 +15,7 @@ const ReporteClientes = () => {
         <CardDescription>Descripción del reporte de clientes</CardDescription>
       </CardHeader>
       <CardContent>
-        <p>Contenido del reporte de clientes</p>
+        <ContadorCliente />
       </CardContent>
     </Card>
   );
