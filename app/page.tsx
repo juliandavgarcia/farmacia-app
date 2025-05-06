@@ -1,5 +1,7 @@
+import { Caracteristicas } from "@/componentes/inicio/caracteristicas";
 import Footer from "@/componentes/inicio/footer";
 import Header from "@/componentes/inicio/header";
+import { Hero } from "@/componentes/inicio/hero";
 
 export const metadata = {
   title: "Home",
@@ -8,10 +10,11 @@ export const metadata = {
 
 export default function Home() {
   return (
-    <div className="flex min-h-screen flex-col">
+    <div className="min-h-screen flex flex-col justify-center items-center">
       <Header />
-      <main className="flex-1 bg-muted">
-        <div className="container mx-auto p-4 space-y-4"></div>
+      <main className="flex-0.5">
+        <Hero />
+        <Caracteristicas />
       </main>
       <Footer />
     </div>
