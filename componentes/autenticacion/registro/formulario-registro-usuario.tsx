@@ -215,7 +215,7 @@ export function FormularioRegistroUsuario({
           </Form>
         </CardContent>
       </Card>
-      <div className="text-balance text-center text-xs text-muted-foreground [&_a]:underline [&_a]:underline-offset-4 [&_a]:hover:text-primary">
+      <div className="text-balance text-center text-xs text-white [&_a]:underline [&_a]:underline-offset-4 [&_a]:hover:text-primary">
         Al hacer clic en continuar, aceptas nuestros{" "}
         <a href="#">Términos de Servicio</a> y{" "}
         <a href="#">Política de Privacidad</a>.
