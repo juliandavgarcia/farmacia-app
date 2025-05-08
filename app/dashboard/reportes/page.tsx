@@ -6,7 +6,6 @@ import GeneradorTitulo from "@/componentes/generadores/generador-titulo";
 import ReporteCategorias from "@/componentes/reportes/reporte-categorias";
 import ReporteClientes from "@/componentes/reportes/reporte-clientes";
 import ReporteCompras from "@/componentes/reportes/reporte-compras";
-import ReporteLotes from "@/componentes/reportes/reporte-lotes";
 import ReporteProductos from "@/componentes/reportes/reporte-productos";
 import ReporteProveedores from "@/componentes/reportes/reporte-proveedores";
 import ReporteVentas from "@/componentes/reportes/reporte-ventas";
@@ -53,12 +52,6 @@ const PaginaReportes = () => {
       label: "Categorías",
       icono: "Book",
       contenido: <ReporteCategorias />,
-    },
-    {
-      valor: "reporte_lotes",
-      label: "Lotes",
-      icono: "Boxes",
-      contenido: <ReporteLotes />,
     },
   ];
 

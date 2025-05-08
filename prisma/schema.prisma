@@ -104,27 +104,26 @@ model Producto {
   categoriaId String    @map("categoria_id")
   categoria   Categoria @relation(fields: [categoriaId], references: [id])
 
-  lotes          Lote[]
-  detallesVenta  DetalleVenta[]
-  detallesCompra DetalleCompra[]
+  inventarios Inventario[]
 
   @@map("productos")
 }
 
-model Lote {
-  id               String   @id @default(cuid())
-  productoId       String   @map("producto_id")
-  numeroLote       String   @map("numero_lote")
-  fechaVencimiento DateTime @map("fecha_vencimiento")
+model Inventario {
+  id               String    @id @default(cuid())
+  productoId       String    @map("producto_id")
   cantidad         Int
-  disponible       Int      @default(0)
-  creadoEn         DateTime @default(now()) @map("created_at")
-  actualizadoEn    DateTime @updatedAt @map("updated_at")
+  fechaVencimiento DateTime? @map("fecha_vencimiento")
+  numeroLote       String?   @map("numero_lote")
+  creadoEn         DateTime  @default(now()) @map("created_at")
+  actualizadoEn    DateTime  @updatedAt @map("updated_at")
 
-  producto      Producto       @relation(fields: [productoId], references: [id])
-  detallesVenta DetalleVenta[]
+  producto       Producto        @relation(fields: [productoId], references: [id])
+  detallesVenta  DetalleVenta[]
+  detallesCompra DetalleCompra[]
 
-  @@map("lotes")
+  @@index([productoId, numeroLote])
+  @@map("inventarios")
 }
 
 model Cliente {
@@ -165,15 +164,13 @@ model Venta {
 model DetalleVenta {
   id             String  @id @default(cuid())
   ventaId        String  @map("venta_id")
-  productoId     String  @map("producto_id")
-  loteId         String  @map("lote_id")
+  inventarioId   String  @map("inventario_id")
   cantidad       Int
   precioUnitario Decimal @map("precio_unitario") @db.Decimal(10, 2)
   subtotal       Decimal @db.Decimal(10, 2)
 
-  venta    Venta    @relation(fields: [ventaId], references: [id], onDelete: Cascade)
-  producto Producto @relation(fields: [productoId], references: [id])
-  lote     Lote     @relation(fields: [loteId], references: [id])
+  venta      Venta      @relation(fields: [ventaId], references: [id], onDelete: Cascade)
+  inventario Inventario @relation(fields: [inventarioId], references: [id])
 
   @@map("detalles_venta")
 }
@@ -201,13 +198,13 @@ model Compra {
 model DetalleCompra {
   id             String  @id @default(cuid())
   compraId       String  @map("compra_id")
-  productoId     String  @map("producto_id")
+  inventarioId   String  @map("inventario_id")
   cantidad       Int
   precioUnitario Decimal @map("precio_unitario") @db.Decimal(10, 2)
   subtotal       Decimal @db.Decimal(10, 2)
 
-  compra   Compra   @relation(fields: [compraId], references: [id], onDelete: Cascade)
-  producto Producto @relation(fields: [productoId], references: [id])
+  compra     Compra     @relation(fields: [compraId], references: [id], onDelete: Cascade)
+  inventario Inventario @relation(fields: [inventarioId], references: [id])
 
   @@map("detalles_compra")
 }
