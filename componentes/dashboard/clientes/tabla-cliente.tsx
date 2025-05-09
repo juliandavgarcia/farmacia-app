@@ -12,6 +12,7 @@ import { ColumnDef } from "@tanstack/react-table";
 import { useEffect, useState } from "react";
 import GeneradorExcel from "@/componentes/generadores/generador-excel";
 import ActualizarCliente from "./actualizar-cliente";
+import GeneradorPDF from "@/componentes/generadores/generador-pdf";
 
 const clienteColumns = (fetchClientes: () => void): ColumnDef<Cliente>[] => [
   {
@@ -124,6 +125,11 @@ const TablaCliente = () => {
     { key: "correo", header: "Correo" },
   ];
 
+  const columnasPDF = [
+    { key: "nombre", header: "Nombre" },
+    { key: "correo", header: "Correo" },
+  ];
+
   if (loading) return <div>Cargando...</div>;
 
   return (
@@ -133,13 +139,20 @@ const TablaCliente = () => {
         columns={clienteColumns(fetchClientes)}
         filterableColumns={["nombre", "documento"]}
       />
-
-      <GeneradorExcel
-        data={data}
-        columns={columnasExcel}
-        fileName="clientes"
-        headerTitle="Listado de Clientes"
-      />
+      <div className="flex space-x-4">
+        <GeneradorExcel
+          data={data}
+          columns={columnasExcel}
+          fileName="clientes"
+          headerTitle="Listado de Clientes"
+        />
+        <GeneradorPDF
+          data={data}
+          columns={columnasPDF}
+          fileName="clientes"
+          headerTitle="Listado de Clientes"
+        />
+      </div>
     </div>
   );
 };
