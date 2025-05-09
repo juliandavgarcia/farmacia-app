@@ -12,6 +12,7 @@ import {
 import { Producto } from "@/logica/esquemas/producto"; // Asegúrate que este esquema incluya `categoriaNombre`
 import ActualizarProducto from "./actualizar-producto";
 import GeneradorExcel from "@/componentes/generadores/generador-excel";
+import GeneradorPDF from "@/componentes/generadores/generador-pdf";
 
 const productColumns = (fetchProductos: () => void): ColumnDef<Producto>[] => [
   {
@@ -139,12 +140,21 @@ const TablaProducto = () => {
         filterableColumns={["nombre", "categoriaNombre"]}
       />
 
-      <GeneradorExcel
-        data={data}
-        columns={columnasExcel}
-        fileName="productos"
-        headerTitle="Listado de Productos"
-      />
+      <div className="flex space-x-4">
+        <GeneradorExcel
+          data={data}
+          columns={columnasExcel}
+          fileName="productos"
+          headerTitle="Listado de Productos"
+        />
+
+        <GeneradorPDF
+          data={data}
+          columns={columnasExcel}
+          fileName="productos"
+          headerTitle="Listado de Productos"
+        />
+      </div>
     </div>
   );
 };
