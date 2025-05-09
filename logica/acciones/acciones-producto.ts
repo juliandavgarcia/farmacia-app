@@ -208,3 +208,54 @@ export const obtenerProductosActivos = async (): Promise<RespuestaProducto> => {
     return { error: MENSAJES.NO_ENCONTRADO };
   }
 };
+
+export const obtenerCantidadProductosPorCategoria =
+  async (): Promise<RespuestaProducto> => {
+    try {
+      const resultado = await prisma.producto.groupBy({
+        by: ["categoriaId"],
+        _count: {
+          categoriaId: true,
+        },
+        where: {
+          estado: true,
+        },
+      });
+
+      const categorias = await prisma.categoria.findMany({
+        where: {
+          id: {
+            in: resultado.map((r) => r.categoriaId),
+          },
+        },
+      });
+
+      const datos = resultado.map((item) => {
+        const categoria = categorias.find((cat) => cat.id === item.categoriaId);
+        return {
+          categoria: categoria?.nombre || "Sin categoría",
+          cantidad: item._count.categoriaId,
+        };
+      });
+
+      return { datos };
+    } catch (error) {
+      console.error("Error al agrupar productos por categoría:", error);
+      return { error: "No se pudo agrupar productos por categoría." };
+    }
+  };
+
+export const obtenerProductosPorCategoria = async (
+  categoriaId: string
+): Promise<RespuestaProducto> => {
+  try {
+    const productos = await prisma.producto.findMany({
+      where: { categoriaId },
+    });
+
+    return { datos: productos };
+  } catch (error) {
+    console.error("Error al obtener los productos por categoría:", error);
+    return { error: MENSAJES.NO_ENCONTRADO };
+  }
+};

@@ -29,19 +29,19 @@ const ContadorCategoria: React.FC = () => {
         title="Categorías Hoy"
         count={categoriasHoy}
         icon={<Book className="h-5 w-5" />}
-        color="blue"
+        color="green"
       />
       <GeneradorContador
         title="Categorías Semana"
         count={categoriasSemana}
         icon={<Book className="h-5 w-5" />}
-        color="blue"
+        color="red"
       />
       <GeneradorContador
         title="Categorías Mes"
         count={categoriasMes}
         icon={<Book className="h-5 w-5" />}
-        color="blue"
+        color="yellow"
       />
     </div>
   );
