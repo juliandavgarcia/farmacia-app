@@ -28,10 +28,13 @@ const GeneradorPDF = <T,>({
     const empresaDireccion = "Calle Ficticia 123, Ciudad, País";
     const empresaContacto = "contacto@farmacol.com | +123 456 7890";
 
-    const fechaGeneracion = new Date().toLocaleDateString("es-ES", {
+    const fechaGeneracion = new Date().toLocaleString("es-ES", {
       year: "numeric",
       month: "long",
       day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
     });
 
     const addHeader = () => {
@@ -59,15 +62,18 @@ const GeneradorPDF = <T,>({
       });
     };
 
-    const tableBody = data.map((item) =>
-      columns.map((col) => {
+    const tableHead = ["N°", ...columns.map((col) => col.header)];
+
+    const tableBody = data.map((item, index) => [
+      (index + 1).toString(),
+      ...columns.map((col) => {
         const value = item[col.key as keyof T];
         return value !== undefined && value !== null ? value.toString() : "";
-      })
-    );
+      }),
+    ]);
 
     autoTable(doc, {
-      head: [columns.map((col) => col.header)],
+      head: [tableHead],
       body: tableBody,
       startY: 30,
       margin: { top: 35 },

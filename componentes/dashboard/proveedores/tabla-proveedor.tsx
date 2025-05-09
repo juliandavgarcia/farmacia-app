@@ -15,6 +15,7 @@ import {
 import { Proveedor } from "@/logica/esquemas/proveedor";
 
 import ActualizarProveedor from "./actualizar-proveedor";
+import GeneradorPDF from "@/componentes/generadores/generador-pdf";
 
 const proveedorColumns = (
   fetchProveedores: () => void
@@ -133,13 +134,20 @@ const TablaProveedor = () => {
         columns={proveedorColumns(fetchProveedores)}
         filterableColumns={["nombre"]}
       />
-
-      <GeneradorExcel
-        data={data}
-        columns={columnasExcel}
-        fileName="proveedores"
-        headerTitle="Listado de Proveedores"
-      />
+      <div className="flex space-x-4">
+        <GeneradorExcel
+          data={data}
+          columns={columnasExcel}
+          fileName="proveedores"
+          headerTitle="Listado de Proveedores"
+        />
+        <GeneradorPDF
+          data={data}
+          columns={columnasExcel}
+          fileName="proveedores"
+          headerTitle="Listado de Proveedores"
+        />
+      </div>
     </div>
   );
 };

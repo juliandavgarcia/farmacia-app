@@ -12,6 +12,7 @@ import { ColumnDef } from "@tanstack/react-table";
 import { useEffect, useState } from "react";
 import ActualizarCategoria from "./actualizar-categoria";
 import GeneradorExcel from "@/componentes/generadores/generador-excel";
+import GeneradorPDF from "@/componentes/generadores/generador-pdf";
 
 const categoryColumns = (
   fetchCategories: () => void
@@ -114,13 +115,20 @@ const TablaCategoria = () => {
         columns={categoryColumns(fetchCategories)}
         filterableColumns={["nombre"]}
       />
-
-      <GeneradorExcel
-        data={data}
-        columns={columnasExcel}
-        fileName="categorias"
-        headerTitle="Listado de Categorías"
-      />
+      <div className="flex space-x-4">
+        <GeneradorExcel
+          data={data}
+          columns={columnasExcel}
+          fileName="categorias"
+          headerTitle="Listado de Categorías"
+        />
+        <GeneradorPDF
+          data={data}
+          columns={columnasExcel}
+          fileName="categorias"
+          headerTitle="Listado de Categorías"
+        />
+      </div>
     </div>
   );
 };
