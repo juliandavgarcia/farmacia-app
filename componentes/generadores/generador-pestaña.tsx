@@ -43,11 +43,12 @@ export function GeneradorPestaña({
               className="flex items-center gap-1"
             >
               {IconComponent && <IconComponent className="h-4" />}
-              {tab.label}
+              <span className="hidden md:inline">{tab.label}</span>
             </TabsTrigger>
           );
         })}
       </TabsList>
+
       {tabs.map((tab) => (
         <TabsContent key={tab.valor} value={tab.valor}>
           {tab.contenido}
