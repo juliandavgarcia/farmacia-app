@@ -11,6 +11,7 @@ import {
   ShoppingCart,
   Truck,
   ClipboardList,
+  AlertCircle,
 } from "lucide-react";
 import { IconType } from "react-icons";
 import { Minus, Plus, GalleryVerticalEnd } from "lucide-react";
@@ -82,9 +83,15 @@ const items: MenuItemOrGroup[] = [
         allowedRoles: ["ADMIN", "FARMACEUTICO"],
       },
       {
-        title: "Lotes",
+        title: "Inventario",
         url: "/dashboard/lotes",
         icon: Boxes,
+        allowedRoles: ["ADMIN", "FARMACEUTICO"],
+      },
+      {
+        title: "Vencimientos",
+        url: "/dashboard/vencimientos",
+        icon: AlertCircle,
         allowedRoles: ["ADMIN", "FARMACEUTICO"],
       },
     ],
