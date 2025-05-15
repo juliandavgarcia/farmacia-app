@@ -7,6 +7,7 @@ import {
   publicRoutes,
   DEFAULT_LOGIN_REDIRECT,
 } from "./routes";
+import { roleProtectedRoutes } from "./role-protected";
 
 const { auth } = NextAuth(authConfig);
 
@@ -18,9 +19,9 @@ export default auth((req) => {
   const isPublicRoute = publicRoutes.includes(nextUrl.pathname);
   const isAuthRoute = authRoutes.includes(nextUrl.pathname);
 
-  if (isApiAuthRoute) {
-    return;
-  }
+  const userRole = req.auth?.user?.rol;
+
+  if (isApiAuthRoute) return;
 
   if (isAuthRoute) {
     if (isLoggedIn) {
@@ -29,8 +30,20 @@ export default auth((req) => {
     return;
   }
 
+  // No logueado y ruta privada
   if (!isLoggedIn && !isPublicRoute && nextUrl.pathname !== "/auth/login") {
     return Response.redirect(new URL("/auth/login", nextUrl));
+  }
+
+  // Verificación de rol
+  for (const [pathPrefix, allowedRoles] of Object.entries(
+    roleProtectedRoutes
+  )) {
+    if (nextUrl.pathname.startsWith(pathPrefix)) {
+      if (!userRole || !allowedRoles.includes(userRole)) {
+        return Response.redirect(new URL("/dashboard/no-autorizado", nextUrl));
+      }
+    }
   }
 
   return;
