@@ -1,15 +1,13 @@
-import { notFound } from "next/navigation";
+"use client";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
 import { CalendarIcon, FileText, Package, User } from "lucide-react";
 
 import { Badge } from "@/componentes/ui/badge";
-import { Button } from "@/componentes/ui/button";
 import {
   Card,
   CardContent,
   CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/componentes/ui/card";
@@ -22,84 +20,72 @@ import {
   TableHeader,
   TableRow,
 } from "@/componentes/ui/table";
-import { prisma } from "@/lib/db";
+import FacturaPDF from "@/componentes/generadores/generador-factura-pdf";
 
-interface DetalleCompraPageProps {
-  params: {
-    id: string;
-  };
-}
-
-async function getCompra(id: string) {
-  if (id === "test") {
-    return {
-      numeroFactura: "TEST-0001",
-      fecha: new Date(),
-      estado: "COMPLETADA",
-      subtotal: 50,
-      impuestos: 10,
-      total: 60,
-      proveedor: {
-        nombre: "Proveedor Test",
-        nit: "00000000",
-        telefono: null,
-        correo: null,
-      },
-      usuario: {
-        nombre: "Usuario Test",
-        correo: "test@correo.com",
-        rol: "OPERADOR",
-      },
-      detalles: [
-        {
-          id: "1",
-          cantidad: 1,
-          precioUnitario: 50,
-          subtotal: 50,
-          inventario: {
-            numeroLote: "L000",
-            fechaVencimiento: null,
-            producto: { nombre: "Producto Test" },
-          },
-        },
-      ],
-    };
-  }
-
-  return await prisma.compra.findUnique({
-    where: { id },
-    include: {
-      proveedor: true,
-      usuario: true,
-      detalles: {
-        include: {
-          inventario: {
-            include: {
-              producto: true,
-            },
-          },
-        },
-      },
+export default function DemoFactura() {
+  // Datos de ejemplo para la demostración
+  const datosCompra = {
+    id: "123456",
+    numeroFactura: "FAC-0001",
+    fecha: new Date(),
+    estado: "COMPLETADA",
+    subtotal: 150.0,
+    impuestos: 19.5,
+    total: 169.5,
+    proveedor: {
+      nombre: "Distribuidora Farmacéutica S.A.",
+      nit: "900123456-7",
+      telefono: "+57 1 234 5678",
+      correo: "contacto@distribuidora.com",
     },
-  });
-}
-
-
-export default async function DetalleCompraPage({
-  params,
-}: DetalleCompraPageProps) {
-  const compra = await getCompra(params.id);
-
-  if (!compra) {
-    notFound();
-  }
+    usuario: {
+      nombre: "Juan Pérez",
+      correo: "juan.perez@farmacol.com",
+      rol: "ADMINISTRADOR",
+    },
+    detalles: [
+      {
+        id: "1",
+        cantidad: 10,
+        precioUnitario: 5.0,
+        subtotal: 50.0,
+        inventario: {
+          numeroLote: "L001",
+          fechaVencimiento: new Date(2025, 11, 31),
+          producto: { nombre: "Paracetamol 500mg" },
+        },
+      },
+      {
+        id: "2",
+        cantidad: 5,
+        precioUnitario: 12.0,
+        subtotal: 60.0,
+        inventario: {
+          numeroLote: "L002",
+          fechaVencimiento: new Date(2026, 5, 30),
+          producto: { nombre: "Amoxicilina 250mg" },
+        },
+      },
+      {
+        id: "3",
+        cantidad: 2,
+        precioUnitario: 20.0,
+        subtotal: 40.0,
+        inventario: {
+          numeroLote: "L003",
+          fechaVencimiento: null,
+          producto: { nombre: "Termómetro Digital" },
+        },
+      },
+    ],
+  };
 
   // Mapear estados a colores de badge
   const estadoBadgeVariant = {
     COMPLETADA: "default",
     PENDIENTE: "outline",
     CANCELADA: "destructive",
-  }[compra.estado] as "default" | "outline" | "destructive" | null;
+  }[datosCompra.estado] as "default" | "outline" | "destructive" | null;
 
   return (
     <div className="mx-auto p-4 space-y-6">
@@ -109,17 +95,12 @@ export default async function DetalleCompraPage({
             Detalle de Compra
           </h1>
           <p className="text-muted-foreground">
-            Factura #{compra.numeroFactura} -{" "}
-            {format(compra.fecha, "PPP", { locale: es })}
+            Factura #{datosCompra.numeroFactura} -{" "}
+            {format(datosCompra.fecha, "PPP", { locale: es })}
           </p>
         </div>
         <div className="flex items-center gap-2">
-          <Button variant="outline" size="sm">
-            Imprimir
-          </Button>
-          <Button variant="outline" size="sm">
-            Exportar PDF
-          </Button>
+          <FacturaPDF datos={datosCompra} />
         </div>
       </div>
 
@@ -135,18 +116,18 @@ export default async function DetalleCompraPage({
           <CardContent className="space-y-3">
             <div className="flex justify-between">
               <span className="text-muted-foreground">Número de Factura:</span>
-              <span className="font-medium">{compra.numeroFactura}</span>
+              <span className="font-medium">{datosCompra.numeroFactura}</span>
             </div>
             <div className="flex justify-between">
               <span className="text-muted-foreground">Fecha:</span>
               <span className="font-medium flex items-center gap-1">
                 <CalendarIcon className="h-4 w-4" />
-                {format(compra.fecha, "dd/MM/yyyy HH:mm", { locale: es })}
+                {format(datosCompra.fecha, "dd/MM/yyyy HH:mm", { locale: es })}
               </span>
             </div>
             <div className="flex justify-between">
               <span className="text-muted-foreground">Estado:</span>
-              <Badge variant={estadoBadgeVariant}>{compra.estado}</Badge>
+              <Badge variant={estadoBadgeVariant}>{datosCompra.estado}</Badge>
             </div>
           </CardContent>
         </Card>
@@ -162,22 +143,28 @@ export default async function DetalleCompraPage({
           <CardContent className="space-y-3">
             <div className="flex justify-between">
               <span className="text-muted-foreground">Nombre:</span>
-              <span className="font-medium">{compra.proveedor.nombre}</span>
+              <span className="font-medium">
+                {datosCompra.proveedor.nombre}
+              </span>
             </div>
             <div className="flex justify-between">
               <span className="text-muted-foreground">NIT:</span>
-              <span className="font-medium">{compra.proveedor.nit}</span>
+              <span className="font-medium">{datosCompra.proveedor.nit}</span>
             </div>
-            {compra.proveedor.telefono && (
+            {datosCompra.proveedor.telefono && (
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Teléfono:</span>
-                <span className="font-medium">{compra.proveedor.telefono}</span>
+                <span className="font-medium">
+                  {datosCompra.proveedor.telefono}
+                </span>
               </div>
             )}
-            {compra.proveedor.correo && (
+            {datosCompra.proveedor.correo && (
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Correo:</span>
-                <span className="font-medium">{compra.proveedor.correo}</span>
+                <span className="font-medium">
+                  {datosCompra.proveedor.correo}
+                </span>
               </div>
             )}
           </CardContent>
@@ -195,18 +182,18 @@ export default async function DetalleCompraPage({
             <div className="flex justify-between">
               <span className="text-muted-foreground">Nombre:</span>
               <span className="font-medium">
-                {compra.usuario.nombre || "N/A"}
+                {datosCompra.usuario.nombre || "N/A"}
               </span>
             </div>
             <div className="flex justify-between">
               <span className="text-muted-foreground">Correo:</span>
               <span className="font-medium">
-                {compra.usuario.correo || "N/A"}
+                {datosCompra.usuario.correo || "N/A"}
               </span>
             </div>
             <div className="flex justify-between">
               <span className="text-muted-foreground">Rol:</span>
-              <Badge variant="outline">{compra.usuario.rol}</Badge>
+              <Badge variant="outline">{datosCompra.usuario.rol}</Badge>
             </div>
           </CardContent>
         </Card>
@@ -233,7 +220,7 @@ export default async function DetalleCompraPage({
               </TableRow>
             </TableHeader>
             <TableBody>
-              {compra.detalles.map((detalle) => (
+              {datosCompra.detalles.map((detalle) => (
                 <TableRow key={detalle.id}>
                   <TableCell className="font-medium">
                     {detalle.inventario.producto.nombre}
@@ -268,7 +255,7 @@ export default async function DetalleCompraPage({
                   Subtotal
                 </TableCell>
                 <TableCell className="text-right">
-                  ${Number(compra.subtotal).toFixed(2)}
+                  ${Number(datosCompra.subtotal).toFixed(2)}
                 </TableCell>
               </TableRow>
               <TableRow>
@@ -276,7 +263,7 @@ export default async function DetalleCompraPage({
                   Impuestos
                 </TableCell>
                 <TableCell className="text-right">
-                  ${Number(compra.impuestos).toFixed(2)}
+                  ${Number(datosCompra.impuestos).toFixed(2)}
                 </TableCell>
               </TableRow>
               <TableRow>
@@ -284,25 +271,12 @@ export default async function DetalleCompraPage({
                   Total
                 </TableCell>
                 <TableCell className="text-right font-bold">
-                  ${Number(compra.total).toFixed(2)}
+                  ${Number(datosCompra.total).toFixed(2)}
                 </TableCell>
               </TableRow>
             </TableFooter>
           </Table>
         </CardContent>
-        <CardFooter className="flex justify-between">
-          <Button variant="outline" size="sm">
-            Volver a Compras
-          </Button>
-          {compra.estado === "PENDIENTE" && (
-            <div className="flex gap-2">
-              <Button variant="outline" size="sm" className="text-destructive">
-                Cancelar Compra
-              </Button>
-              <Button size="sm">Completar Compra</Button>
-            </div>
-          )}
-        </CardFooter>
       </Card>
     </div>
   );
