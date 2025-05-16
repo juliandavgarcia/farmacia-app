@@ -134,15 +134,16 @@ export const actualizarProducto = async (
 
 export const eliminarProducto = async (
   productoId: string
-): Promise<{ exito: boolean; error?: string }> => {
+): Promise<{ success: boolean; error?: string }> => {
   try {
     await prisma.producto.delete({ where: { id: productoId } });
-    return { exito: true };
+    return { success: true };
   } catch (error) {
     console.error("Error al eliminar el producto:", error);
-    return { exito: false, error: MENSAJES.ERROR_ELIMINACION };
+    return { success: false, error: MENSAJES.ERROR_ELIMINACION };
   }
 };
+
 
 export const obtenerProductoPorId = async (
   productoId: string

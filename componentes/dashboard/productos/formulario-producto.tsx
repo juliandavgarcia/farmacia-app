@@ -83,7 +83,7 @@ const FormularioProducto = () => {
       validacion: EsquemaProducto.shape.precioVenta,
     },
     {
-      nombre: "unit",
+      nombre: "unidadMedida",
       label: "Unidad",
       tipo: "select",
       placeholder: "Seleccione una opción",
