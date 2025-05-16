@@ -1,4 +1,5 @@
 import FormularioUsuario from "@/componentes/dashboard/usuarios/formulario-usuario";
+import TablaUsuario from "@/componentes/dashboard/usuarios/tabla-usuario";
 import {
   GeneradorPestaña,
   TabItem,
@@ -22,7 +23,7 @@ const PaginaUsuarios = () => {
       valor: "consult",
       label: "Consultar",
       icono: "Search",
-      contenido: <></>,
+      contenido: <TablaUsuario />,
     },
   ];
 

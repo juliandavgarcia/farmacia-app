@@ -7,46 +7,29 @@ import {
   publicRoutes,
   DEFAULT_LOGIN_REDIRECT,
 } from "./routes";
-import { roleProtectedRoutes } from "./role-protected";
 
 const { auth } = NextAuth(authConfig);
 
 export default auth((req) => {
   const { nextUrl } = req;
+  const path = nextUrl.pathname;
   const isLoggedIn = !!req.auth;
 
-  const isApiAuthRoute = nextUrl.pathname.startsWith(apiAuthPrefix);
-  const isPublicRoute = publicRoutes.includes(nextUrl.pathname);
-  const isAuthRoute = authRoutes.includes(nextUrl.pathname);
+  // Ignora rutas de autenticación de API
+  if (path.startsWith(apiAuthPrefix)) return;
 
-  const userRole = req.auth?.user?.rol;
-
-  if (isApiAuthRoute) return;
-
-  if (isAuthRoute) {
-    if (isLoggedIn) {
-      return Response.redirect(new URL(DEFAULT_LOGIN_REDIRECT, nextUrl));
-    }
-    return;
+  // Ya está logueado e intenta entrar a /login o similares
+  if (authRoutes.includes(path) && isLoggedIn) {
+    return Response.redirect(new URL(DEFAULT_LOGIN_REDIRECT, nextUrl));
   }
 
-  // No logueado y ruta privada
-  if (!isLoggedIn && !isPublicRoute && nextUrl.pathname !== "/auth/login") {
+  // No logueado y no es ruta pública
+  const isPublic = publicRoutes.includes(path) || authRoutes.includes(path);
+  if (!isLoggedIn && !isPublic) {
     return Response.redirect(new URL("/auth/login", nextUrl));
   }
 
-  // Verificación de rol
-  for (const [pathPrefix, allowedRoles] of Object.entries(
-    roleProtectedRoutes
-  )) {
-    if (nextUrl.pathname.startsWith(pathPrefix)) {
-      if (!userRole || !allowedRoles.includes(userRole)) {
-        return Response.redirect(new URL("/dashboard/no-autorizado", nextUrl));
-      }
-    }
-  }
-
-  return;
+  return; // permitir acceso
 });
 
 export const config = {
