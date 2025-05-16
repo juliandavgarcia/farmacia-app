@@ -56,9 +56,7 @@ export const obtenerCompraPorId = async (
       where: { id: compraId },
       include: {
         proveedor: true,
-        detalles: {
-          include: { producto: true },
-        },
+        detalles: true,
       },
     });
 

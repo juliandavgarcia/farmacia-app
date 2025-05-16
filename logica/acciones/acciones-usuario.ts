@@ -4,7 +4,7 @@
 import { PrismaClient } from "@prisma/client";
 import bcrypt from "bcryptjs";
 import * as z from "zod";
-import { EsquemaUsuario, Usuario } from "../esquemas/usuario";
+import { EsquemaUsuarioActualizacion, Usuario } from "../esquemas/usuario";
 
 const prisma = new PrismaClient();
 
@@ -60,9 +60,9 @@ export const crearUsuario = async (
 
 export const manejadorActualizarUsuario = async (
   idUsuario: string,
-  valores: z.infer<typeof EsquemaUsuario>
+  valores: z.infer<typeof EsquemaUsuarioActualizacion>
 ): Promise<MensajeRespuesta> => {
-  const camposValidados = EsquemaUsuario.safeParse(valores);
+  const camposValidados = EsquemaUsuarioActualizacion.safeParse(valores);
 
   if (!camposValidados.success) {
     return { error: MENSAJES.CAMPOS_INVALIDOS };

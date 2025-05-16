@@ -135,7 +135,7 @@ export function FormularioLogin({
             </form>
           </Form>
 
-          <div className="relative hidden bg-muted md:block">
+          <div className="relative hidden bg-muted dark:bg-neutral-500 md:block">
             <Image
               src="/inicio.svg"
               alt="Farmacéutico usando el sistema POS"
