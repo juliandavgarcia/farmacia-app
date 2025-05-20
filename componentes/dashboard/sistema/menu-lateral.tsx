@@ -6,7 +6,6 @@ import {
   Users,
   UserCog,
   Settings,
-  Boxes,
   FileText,
   ShoppingCart,
   Truck,
@@ -80,12 +79,6 @@ const items: MenuItemOrGroup[] = [
         title: "Categorías",
         url: "/dashboard/categorias",
         icon: Book,
-        allowedRoles: ["ADMIN", "FARMACEUTICO"],
-      },
-      {
-        title: "Inventario",
-        url: "/dashboard/lotes",
-        icon: Boxes,
         allowedRoles: ["ADMIN", "FARMACEUTICO"],
       },
       {

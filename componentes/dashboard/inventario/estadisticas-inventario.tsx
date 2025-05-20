@@ -19,7 +19,7 @@ export default function InventarioStats({ producto }: InventarioStatsProps) {
     (total: number, inv: any) => total + inv.cantidad,
     0
   );
-  const stockMinimo = 10; // Esto podría ser un valor configurable o calculado
+  const stockMinimo = 10;
   const stockBajo = stockTotal < stockMinimo;
   const porcentajeStock =
     stockMinimo > 0 ? Math.min((stockTotal / stockMinimo) * 100, 100) : 100;
