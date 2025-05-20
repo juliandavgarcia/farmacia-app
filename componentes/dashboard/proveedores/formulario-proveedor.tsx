@@ -46,7 +46,7 @@ const FormularioProveedor = () => {
       nombre: "correo",
       label: "Correo electrónico",
       tipo: "email",
-      placeholder: "(Opcional)",
+      placeholder: "  Ej. proveedor@example.com",
       validacion: EsquemaProveedor.shape.correo,
     },
     {

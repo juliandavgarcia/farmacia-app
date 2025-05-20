@@ -134,13 +134,13 @@ export const actualizarProducto = async (
 
 export const eliminarProducto = async (
   productoId: string
-): Promise<{ exito: boolean; error?: string }> => {
+): Promise<{ success: boolean; error?: string }> => {
   try {
     await prisma.producto.delete({ where: { id: productoId } });
-    return { exito: true };
+    return { success: true };
   } catch (error) {
     console.error("Error al eliminar el producto:", error);
-    return { exito: false, error: MENSAJES.ERROR_ELIMINACION };
+    return { success: false, error: MENSAJES.ERROR_ELIMINACION };
   }
 };
 
@@ -257,5 +257,80 @@ export const obtenerProductosPorCategoria = async (
   } catch (error) {
     console.error("Error al obtener los productos por categoría:", error);
     return { error: MENSAJES.NO_ENCONTRADO };
+  }
+};
+
+export const obtenerCantidadProductos =
+  async (): Promise<RespuestaProducto> => {
+    try {
+      const cantidad = await prisma.producto.count();
+      return { datos: cantidad };
+    } catch (error) {
+      console.error("Error al obtener la cantidad de productos:", error);
+      return { error: "Error al obtener la cantidad de productos." };
+    }
+  };
+
+export const obtenerProductosHoy = async (): Promise<RespuestaProducto> => {
+  const hoy = new Date();
+  const inicioDia = new Date(hoy.setHours(0, 0, 0, 0));
+
+  try {
+    const cantidadHoy = await prisma.producto.count({
+      where: {
+        creadoEn: {
+          gte: inicioDia,
+        },
+      },
+    });
+    return { datos: cantidadHoy };
+  } catch (error) {
+    console.error("Error al obtener los productos de hoy:", error);
+    return {
+      error: "Error al obtener los productos de hoy.",
+    };
+  }
+};
+
+export const obtenerProductosSemana = async (): Promise<RespuestaProducto> => {
+  const hoy = new Date();
+  const inicioSemana = new Date(hoy.setDate(hoy.getDate() - hoy.getDay()));
+  inicioSemana.setHours(0, 0, 0, 0);
+
+  try {
+    const cantidadSemana = await prisma.producto.count({
+      where: {
+        creadoEn: {
+          gte: inicioSemana,
+        },
+      },
+    });
+    return { datos: cantidadSemana };
+  } catch (error) {
+    console.error("Error al obtener los productos de la semana:", error);
+    return {
+      error: "Error al obtener los productos de la semana.",
+    };
+  }
+};
+
+export const obtenerProductosMes = async (): Promise<RespuestaProducto> => {
+  const hoy = new Date();
+  const inicioMes = new Date(hoy.getFullYear(), hoy.getMonth(), 1);
+
+  try {
+    const cantidadMes = await prisma.producto.count({
+      where: {
+        creadoEn: {
+          gte: inicioMes,
+        },
+      },
+    });
+    return { datos: cantidadMes };
+  } catch (error) {
+    console.error("Error al obtener los productos del mes:", error);
+    return {
+      error: "Error al obtener los productos del mes.",
+    };
   }
 };

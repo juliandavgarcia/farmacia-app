@@ -70,3 +70,81 @@ export const obtenerCompraPorId = async (
     return { error: "Error al obtener la compra" };
   }
 };
+
+export const obtenerCompras = async (): Promise<MensajeRespuesta> => {
+  try {
+    const compras = await prisma.compra.findMany();
+    return { datos: compras };
+  } catch (error) {
+    console.error("Error al obtener las compras:", error);
+    return { error: "Error al obtener las compras." };
+  }
+};
+
+export const obtenerCantidadCompras = async (): Promise<MensajeRespuesta> => {
+  try {
+    const cantidad = await prisma.compra.count();
+    return { datos: cantidad };
+  } catch (error) {
+    console.error("Error al obtener la cantidad de compras:", error);
+    return { error: "Error al obtener la cantidad de compras." };
+  }
+};
+
+export const obtenerComprasHoy = async (): Promise<MensajeRespuesta> => {
+  const hoy = new Date();
+  const inicioDia = new Date(hoy.setHours(0, 0, 0, 0));
+
+  try {
+    const comprasHoy = await prisma.compra.findMany({
+      where: {
+        fecha: {
+          gte: inicioDia,
+        },
+      },
+    });
+    return { datos: comprasHoy };
+  } catch (error) {
+    console.error("Error al obtener las compras de hoy:", error);
+    return { error: "Error al obtener las compras de hoy." };
+  }
+};
+
+export const obtenerComprasSemana = async (): Promise<MensajeRespuesta> => {
+  const hoy = new Date();
+  const inicioSemana = new Date(hoy);
+  inicioSemana.setDate(hoy.getDate() - hoy.getDay());
+
+  try {
+    const comprasSemana = await prisma.compra.findMany({
+      where: {
+        fecha: {
+          gte: inicioSemana,
+        },
+      },
+    });
+    return { datos: comprasSemana };
+  } catch (error) {
+    console.error("Error al obtener las compras de la semana:", error);
+    return { error: "Error al obtener las compras de la semana." };
+  }
+};
+
+export const obtenerComprasMes = async (): Promise<MensajeRespuesta> => {
+  const hoy = new Date();
+  const inicioMes = new Date(hoy.getFullYear(), hoy.getMonth(), 1);
+
+  try {
+    const comprasMes = await prisma.compra.findMany({
+      where: {
+        fecha: {
+          gte: inicioMes,
+        },
+      },
+    });
+    return { datos: comprasMes };
+  } catch (error) {
+    console.error("Error al obtener las compras del mes:", error);
+    return { error: "Error al obtener las compras del mes." };
+  }
+};

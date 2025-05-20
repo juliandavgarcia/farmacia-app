@@ -13,6 +13,7 @@ import { Button } from "@/componentes/ui/button";
 import { Separator } from "@/componentes/ui/separator";
 import { RadioGroup, RadioGroupItem } from "@/componentes/ui/radio-group";
 import { Label } from "@/componentes/ui/label";
+import { ItemCarrito } from "./nueva-venta-form";
 
 interface ResumenVentaProps {
   items: ItemCarrito[];
