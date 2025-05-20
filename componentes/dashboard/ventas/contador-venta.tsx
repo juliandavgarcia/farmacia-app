@@ -3,18 +3,33 @@
 import GeneradorContador from "@/componentes/graficas/generador-contador";
 import { Book } from "lucide-react";
 import React, { useEffect, useState } from "react";
+import {
+  obtenerCantidadVentas,
+  obtenerVentasHoy,
+  obtenerVentasSemana,
+  obtenerVentasMes,
+} from "@/logica/acciones/acciones-venta";
 
 const ContadorVenta: React.FC = () => {
-  const [categoriasHoy, setCategoriasHoy] = useState<number>(0);
-  const [categoriasSemana, setCategoriasSemana] = useState<number>(0);
-  const [categoriasMes, setCategoriasMes] = useState<number>(0);
+  const [ventasHoy, setVentasHoy] = useState<number>(0);
+  const [ventasSemana, setVentasSemana] = useState<number>(0);
+  const [ventasMes, setVentasMes] = useState<number>(0);
   const [cantidadTotal, setCantidadTotal] = useState<number>(0);
 
   useEffect(() => {
-    setCategoriasHoy(12);
-    setCategoriasSemana(50);
-    setCategoriasMes(150);
-    setCantidadTotal(200);
+    const cargarDatos = async () => {
+      const totalRes = await obtenerCantidadVentas();
+      const hoyRes = await obtenerVentasHoy();
+      const semanaRes = await obtenerVentasSemana();
+      const mesRes = await obtenerVentasMes();
+
+      if (totalRes.datos) setCantidadTotal(totalRes.datos);
+      if (hoyRes.datos) setVentasHoy(hoyRes.datos);
+      if (semanaRes.datos) setVentasSemana(semanaRes.datos);
+      if (mesRes.datos) setVentasMes(mesRes.datos);
+    };
+
+    cargarDatos();
   }, []);
 
   return (
@@ -27,21 +42,21 @@ const ContadorVenta: React.FC = () => {
       />
       <GeneradorContador
         title="Ventas Hoy"
-        count={categoriasHoy}
+        count={ventasHoy}
         icon={<Book className="h-5 w-5" />}
-        color="blue"
+        color="green"
       />
       <GeneradorContador
         title="Ventas Semana"
-        count={categoriasSemana}
+        count={ventasSemana}
         icon={<Book className="h-5 w-5" />}
-        color="blue"
+        color="red"
       />
       <GeneradorContador
         title="Ventas Mes"
-        count={categoriasMes}
+        count={ventasMes}
         icon={<Book className="h-5 w-5" />}
-        color="blue"
+        color="yellow"
       />
     </div>
   );

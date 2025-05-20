@@ -1,20 +1,35 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import GeneradorContador from "@/componentes/graficas/generador-contador";
 import { Book } from "lucide-react";
-import React, { useEffect, useState } from "react";
+import {
+  obtenerCantidadCategorias,
+  obtenerCategoriasHoy,
+  obtenerCategoriasSemana,
+  obtenerCategoriasMes,
+} from "@/logica/acciones/acciones-categoria";
 
 const ContadorCategoria: React.FC = () => {
-  const [categoriasHoy, setCategoriasHoy] = useState<number>(0);
-  const [categoriasSemana, setCategoriasSemana] = useState<number>(0);
-  const [categoriasMes, setCategoriasMes] = useState<number>(0);
-  const [cantidadTotal, setCantidadTotal] = useState<number>(0);
+  const [cantidadTotal, setCantidadTotal] = useState(0);
+  const [categoriasHoy, setCategoriasHoy] = useState(0);
+  const [categoriasSemana, setCategoriasSemana] = useState(0);
+  const [categoriasMes, setCategoriasMes] = useState(0);
 
   useEffect(() => {
-    setCategoriasHoy(12);
-    setCategoriasSemana(50);
-    setCategoriasMes(150);
-    setCantidadTotal(200);
+    const cargarDatos = async () => {
+      const totalRes = await obtenerCantidadCategorias();
+      const hoyRes = await obtenerCategoriasHoy();
+      const semanaRes = await obtenerCategoriasSemana();
+      const mesRes = await obtenerCategoriasMes();
+
+      if (totalRes.data) setCantidadTotal(totalRes.data);
+      if (hoyRes.data) setCategoriasHoy(hoyRes.data);
+      if (semanaRes.data) setCategoriasSemana(semanaRes.data);
+      if (mesRes.data) setCategoriasMes(mesRes.data);
+    };
+
+    cargarDatos();
   }, []);
 
   return (
