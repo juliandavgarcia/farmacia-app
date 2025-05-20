@@ -3,18 +3,33 @@
 import GeneradorContador from "@/componentes/graficas/generador-contador";
 import { Book } from "lucide-react";
 import React, { useEffect, useState } from "react";
+import {
+  obtenerCantidadCompras,
+  obtenerComprasHoy,
+  obtenerComprasSemana,
+  obtenerComprasMes,
+} from "@/logica/acciones/acciones-compra";
 
 const ContadorCompra: React.FC = () => {
-  const [categoriasHoy, setCategoriasHoy] = useState<number>(0);
-  const [categoriasSemana, setCategoriasSemana] = useState<number>(0);
-  const [categoriasMes, setCategoriasMes] = useState<number>(0);
+  const [comprasHoy, setComprasHoy] = useState<number>(0);
+  const [comprasSemana, setComprasSemana] = useState<number>(0);
+  const [comprasMes, setComprasMes] = useState<number>(0);
   const [cantidadTotal, setCantidadTotal] = useState<number>(0);
 
   useEffect(() => {
-    setCategoriasHoy(12);
-    setCategoriasSemana(50);
-    setCategoriasMes(150);
-    setCantidadTotal(200);
+    const cargarDatos = async () => {
+      const totalRes = await obtenerCantidadCompras();
+      const hoyRes = await obtenerComprasHoy();
+      const semanaRes = await obtenerComprasSemana();
+      const mesRes = await obtenerComprasMes();
+
+      if (totalRes.datos) setCantidadTotal(totalRes.datos);
+      if (hoyRes.datos) setComprasHoy(hoyRes.datos);
+      if (semanaRes.datos) setComprasSemana(semanaRes.datos);
+      if (mesRes.datos) setComprasMes(mesRes.datos);
+    };
+
+    cargarDatos();
   }, []);
 
   return (
@@ -27,21 +42,21 @@ const ContadorCompra: React.FC = () => {
       />
       <GeneradorContador
         title="Compras Hoy"
-        count={categoriasHoy}
+        count={comprasHoy}
         icon={<Book className="h-5 w-5" />}
-        color="blue"
+        color="green"
       />
       <GeneradorContador
         title="Compras Semana"
-        count={categoriasSemana}
+        count={comprasSemana}
         icon={<Book className="h-5 w-5" />}
-        color="blue"
+        color="red"
       />
       <GeneradorContador
         title="Compras Mes"
-        count={categoriasMes}
+        count={comprasMes}
         icon={<Book className="h-5 w-5" />}
-        color="blue"
+        color="yellow"
       />
     </div>
   );

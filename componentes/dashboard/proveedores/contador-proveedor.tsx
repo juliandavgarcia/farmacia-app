@@ -44,19 +44,19 @@ const ContadorProveedor: React.FC = () => {
         title="Proveedores Hoy"
         count={hoy}
         icon={<Book className="h-5 w-5" />}
-        color="blue"
+        color="green"
       />
       <GeneradorContador
         title="Proveedores Semana"
         count={semana}
         icon={<Book className="h-5 w-5" />}
-        color="blue"
+        color="red"
       />
       <GeneradorContador
         title="Proveedores Mes"
         count={mes}
         icon={<Book className="h-5 w-5" />}
-        color="blue"
+        color="yellow"
       />
     </div>
   );

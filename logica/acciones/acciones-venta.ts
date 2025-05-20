@@ -359,3 +359,96 @@ export async function anularVenta(ventaId: string) {
     };
   }
 }
+
+export const obtenerCantidadVentas = async (): Promise<MensajeRespuesta> => {
+  try {
+    const total = await prisma.venta.count({
+      where: { estado: "COMPLETADA" },
+    });
+    return { datos: total };
+  } catch (error) {
+    console.error("Error al obtener la cantidad total de ventas:", error);
+    return { error: "Error al obtener la cantidad total de ventas" };
+  }
+};
+
+export const obtenerVentasHoy = async (): Promise<MensajeRespuesta> => {
+  try {
+    const inicioHoy = new Date();
+    inicioHoy.setHours(0, 0, 0, 0);
+    const finHoy = new Date();
+    finHoy.setHours(23, 59, 59, 999);
+
+    const totalHoy = await prisma.venta.count({
+      where: {
+        estado: "COMPLETADA",
+        fecha: {
+          gte: inicioHoy,
+          lte: finHoy,
+        },
+      },
+    });
+
+    return { datos: totalHoy };
+  } catch (error) {
+    console.error("Error al obtener las ventas de hoy:", error);
+    return { error: "Error al obtener las ventas de hoy" };
+  }
+};
+
+export const obtenerVentasSemana = async (): Promise<MensajeRespuesta> => {
+  try {
+    const ahora = new Date();
+    const primerDiaSemana = new Date(ahora);
+    const dia = ahora.getDay(); // 0 domingo ... 6 sábado
+    // Suponiendo que la semana inicia lunes
+    const diff = dia === 0 ? 6 : dia - 1;
+    primerDiaSemana.setDate(ahora.getDate() - diff);
+    primerDiaSemana.setHours(0, 0, 0, 0);
+
+    const ultimoDiaSemana = new Date(primerDiaSemana);
+    ultimoDiaSemana.setDate(primerDiaSemana.getDate() + 6);
+    ultimoDiaSemana.setHours(23, 59, 59, 999);
+
+    const totalSemana = await prisma.venta.count({
+      where: {
+        estado: "COMPLETADA",
+        fecha: {
+          gte: primerDiaSemana,
+          lte: ultimoDiaSemana,
+        },
+      },
+    });
+
+    return { datos: totalSemana };
+  } catch (error) {
+    console.error("Error al obtener las ventas de la semana:", error);
+    return { error: "Error al obtener las ventas de la semana" };
+  }
+};
+
+export const obtenerVentasMes = async (): Promise<MensajeRespuesta> => {
+  try {
+    const ahora = new Date();
+    const primerDiaMes = new Date(ahora.getFullYear(), ahora.getMonth(), 1);
+    primerDiaMes.setHours(0, 0, 0, 0);
+
+    const ultimoDiaMes = new Date(ahora.getFullYear(), ahora.getMonth() + 1, 0);
+    ultimoDiaMes.setHours(23, 59, 59, 999);
+
+    const totalMes = await prisma.venta.count({
+      where: {
+        estado: "COMPLETADA",
+        fecha: {
+          gte: primerDiaMes,
+          lte: ultimoDiaMes,
+        },
+      },
+    });
+
+    return { datos: totalMes };
+  } catch (error) {
+    console.error("Error al obtener las ventas del mes:", error);
+    return { error: "Error al obtener las ventas del mes" };
+  }
+};
