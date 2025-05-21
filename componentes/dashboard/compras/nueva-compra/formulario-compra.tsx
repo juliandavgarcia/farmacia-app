@@ -36,6 +36,7 @@ import {
   crearCompra,
   generarNumeroFactura,
 } from "@/logica/acciones/acciones-compra";
+import FacturaPDF from "@/componentes/generadores/generador-factura-pdf";
 
 // Esquema de validación para el formulario
 const compraFormSchema = z.object({
@@ -72,6 +73,10 @@ export default function FormularioCompra({
   );
   const [numeroLote, setNumeroLote] = useState<string>("");
   const [isLoading, setIsLoading] = useState(true);
+  // Estado para guardar los datos de la factura generada
+  const [facturaGenerada, setFacturaGenerada] = useState<any>(null);
+  // Estado para mostrar/ocultar el botón de PDF
+  const [mostrarPDF, setMostrarPDF] = useState<boolean>(false);
 
   const form = useForm<z.infer<typeof compraFormSchema>>({
     resolver: zodResolver(compraFormSchema),
@@ -154,6 +159,29 @@ export default function FormularioCompra({
   const impuestos = subtotal * 0.19; // IVA 19%
   const total = subtotal + impuestos;
 
+  // Resetear el formulario y estados
+  const resetearFormulario = async () => {
+    form.reset();
+    setDetalles([]);
+    setSelectedProveedor(null);
+    setMostrarPDF(false);
+    setFacturaGenerada(null);
+
+    // Generar nuevo número de factura
+    try {
+      const nuevoNumeroFactura = await generarNumeroFactura();
+      form.setValue("numeroFactura", nuevoNumeroFactura);
+      form.setValue("fecha", new Date());
+    } catch (error) {
+      console.error("Error al generar nuevo número de factura:", error);
+    }
+  };
+
+  // Iniciar nueva compra después de generar el PDF
+  const iniciarNuevaCompra = () => {
+    resetearFormulario();
+  };
+
   // Enviar el formulario
   const onSubmit = async (values: z.infer<typeof compraFormSchema>) => {
     if (detalles.length === 0) {
@@ -184,15 +212,42 @@ export default function FormularioCompra({
       if (result.success) {
         toast("La compra se ha registrado correctamente");
 
-        // Resetear formulario
-        form.reset();
-        setDetalles([]);
-        setSelectedProveedor(null);
+        // Preparar datos para la factura PDF
+        const datosFactura = {
+          id: result.compraId,
+          numeroFactura: values.numeroFactura,
+          fecha: values.fecha,
+          estado: "Completada",
+          subtotal,
+          impuestos,
+          total,
+          proveedor: {
+            nombre: selectedProveedor?.nombre || "",
+            nit: selectedProveedor?.nit || "",
+          },
+          usuario: {
+            nombre: "Usuario Actual", // Ajustar según tu sistema de autenticación
+            correo: "usuario@example.com", // Ajustar según tu sistema de autenticación
+            rol: "Administrador", // Ajustar según tu sistema de autenticación
+          },
+          detalles: detalles.map((d) => ({
+            id: d.productoId,
+            cantidad: d.cantidad,
+            precioUnitario: d.precioUnitario,
+            subtotal: d.subtotal,
+            inventario: {
+              numeroLote: d.numeroLote || "",
+              fechaVencimiento: d.fechaVencimiento || null,
+              producto: {
+                nombre: d.nombreProducto,
+              },
+            },
+          })),
+        };
 
-        // Generar nuevo número de factura
-        const nuevoNumeroFactura = await generarNumeroFactura();
-        form.setValue("numeroFactura", nuevoNumeroFactura);
-        form.setValue("fecha", new Date());
+        // Guardar los datos de la factura y mostrar el botón de PDF
+        setFacturaGenerada(datosFactura);
+        setMostrarPDF(true);
       } else {
         throw new Error(result.error);
       }
@@ -215,304 +270,344 @@ export default function FormularioCompra({
 
   return (
     <div>
-      <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <FormField
-              control={form.control}
-              name="proveedorId"
-              render={() => (
-                <FormItem className="space-y-2">
-                  <FormLabel className="text-sm font-medium">
-                    Proveedor
-                  </FormLabel>
-                  <FormControl>
-                    <div>
-                      <SelectorProveedor
-                        proveedores={proveedores ?? []}
-                        onSelect={handleProveedorSelect}
-                        selectedProveedor={selectedProveedor}
-                      />
-                    </div>
-                  </FormControl>
-                  <FormMessage className="text-xs" />
-                </FormItem>
+      {mostrarPDF ? (
+        <div className="bg-green-50 p-6 mb-6 rounded-lg border border-green-200 shadow-sm">
+          <div className="flex flex-col md:flex-row items-center justify-between">
+            <div>
+              <h3 className="text-green-800 font-medium text-lg mb-2">
+                ¡Compra registrada exitosamente!
+              </h3>
+              <p className="text-green-700 mb-4">
+                La factura #{facturaGenerada.numeroFactura} ha sido generada.
+                Puedes descargarla ahora o iniciar una nueva compra.
+              </p>
+            </div>
+            <div className="flex space-x-4 mt-4 md:mt-0">
+              {facturaGenerada && (
+                <FacturaPDF
+                  datos={facturaGenerada}
+                  titulo="Factura de Compra"
+                />
               )}
-            />
+              <Button onClick={iniciarNuevaCompra} variant="outline">
+                Iniciar Nueva Compra
+              </Button>
+            </div>
+          </div>
+        </div>
+      ) : (
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <FormField
+                control={form.control}
+                name="proveedorId"
+                render={() => (
+                  <FormItem className="space-y-2">
+                    <FormLabel className="text-sm font-medium">
+                      Proveedor
+                    </FormLabel>
+                    <FormControl>
+                      <div>
+                        <SelectorProveedor
+                          proveedores={proveedores ?? []}
+                          onSelect={handleProveedorSelect}
+                          selectedProveedor={selectedProveedor}
+                        />
+                      </div>
+                    </FormControl>
+                    <FormMessage className="text-xs" />
+                  </FormItem>
+                )}
+              />
 
-            <FormField
-              control={form.control}
-              name="numeroFactura"
-              render={({ field }) => (
-                <FormItem className="space-y-2">
+              <FormField
+                control={form.control}
+                name="numeroFactura"
+                render={({ field }) => (
+                  <FormItem className="space-y-2">
+                    <FormLabel className="text-sm font-medium">
+                      Número de Factura
+                    </FormLabel>
+                    <FormControl>
+                      <Input {...field} className="bg-slate-50" readOnly />
+                    </FormControl>
+                    <FormMessage className="text-xs" />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="fecha"
+                render={({ field }) => (
+                  <FormItem className="flex flex-col space-y-2">
+                    <FormLabel className="text-sm font-medium">Fecha</FormLabel>
+                    <Popover>
+                      <PopoverTrigger asChild>
+                        <FormControl>
+                          <Button
+                            variant={"outline"}
+                            className={`w-full pl-3 text-left font-normal ${
+                              !field.value ? "text-muted-foreground" : ""
+                            }`}
+                          >
+                            {field.value ? (
+                              format(field.value, "PPP", { locale: es })
+                            ) : (
+                              <span>Seleccionar fecha</span>
+                            )}
+                            <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                          </Button>
+                        </FormControl>
+                      </PopoverTrigger>
+                      <PopoverContent className="w-auto p-0" align="start">
+                        <Calendar
+                          mode="single"
+                          selected={field.value}
+                          onSelect={field.onChange}
+                          disabled={(date) => date > new Date()}
+                          initialFocus
+                        />
+                      </PopoverContent>
+                    </Popover>
+                    <FormMessage className="text-xs" />
+                  </FormItem>
+                )}
+              />
+            </div>
+
+            <div className="bg-slate-50 p-6 rounded-lg shadow-sm border border-slate-100">
+              <h3 className="text-lg font-medium mb-4 text-slate-800">
+                Agregar Productos
+              </h3>
+
+              <div className="grid grid-cols-1 md:grid-cols-12 gap-4 mb-6">
+                <div className="md:col-span-5">
                   <FormLabel className="text-sm font-medium">
-                    Número de Factura
+                    Producto
                   </FormLabel>
-                  <FormControl>
-                    <Input {...field} className="bg-slate-50" readOnly />
-                  </FormControl>
-                  <FormMessage className="text-xs" />
-                </FormItem>
-              )}
-            />
+                  <SelectorProducto
+                    productos={productos}
+                    onSelect={handleProductoSelect}
+                    selectedProducto={selectedProducto}
+                  />
+                </div>
 
-            <FormField
-              control={form.control}
-              name="fecha"
-              render={({ field }) => (
-                <FormItem className="flex flex-col space-y-2">
-                  <FormLabel className="text-sm font-medium">Fecha</FormLabel>
+                <div className="md:col-span-2">
+                  <FormLabel className="text-sm font-medium">
+                    Cantidad
+                  </FormLabel>
+                  <Input
+                    type="number"
+                    min="1"
+                    value={cantidad}
+                    onChange={(e) =>
+                      setCantidad(Number.parseInt(e.target.value) || 1)
+                    }
+                    className="w-full"
+                  />
+                </div>
+
+                <div className="md:col-span-3">
+                  <FormLabel className="text-sm font-medium">
+                    Precio Unitario
+                  </FormLabel>
+                  <Input
+                    type="number"
+                    min="0"
+                    step="0.01"
+                    value={precioUnitario}
+                    onChange={(e) =>
+                      setPrecioUnitario(Number.parseFloat(e.target.value) || 0)
+                    }
+                    className="w-full"
+                  />
+                </div>
+
+                <div className="md:col-span-2 flex items-end">
+                  <Button
+                    type="button"
+                    onClick={agregarDetalle}
+                    disabled={
+                      !selectedProducto || cantidad <= 0 || precioUnitario <= 0
+                    }
+                    className="w-full"
+                  >
+                    <Plus className="h-4 w-4 mr-2" />
+                    Agregar
+                  </Button>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4">
+                <div>
+                  <FormLabel className="text-sm font-medium">
+                    Número de Lote (opcional)
+                  </FormLabel>
+                  <Input
+                    value={numeroLote}
+                    onChange={(e) => setNumeroLote(e.target.value)}
+                    placeholder="Ingrese número de lote"
+                    className="w-full"
+                  />
+                </div>
+
+                <div>
+                  <FormLabel className="text-sm font-medium">
+                    Fecha de Vencimiento (opcional)
+                  </FormLabel>
                   <Popover>
                     <PopoverTrigger asChild>
-                      <FormControl>
-                        <Button
-                          variant={"outline"}
-                          className={`w-full pl-3 text-left font-normal ${
-                            !field.value ? "text-muted-foreground" : ""
-                          }`}
-                        >
-                          {field.value ? (
-                            format(field.value, "PPP", { locale: es })
-                          ) : (
-                            <span>Seleccionar fecha</span>
-                          )}
-                          <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                        </Button>
-                      </FormControl>
+                      <Button
+                        variant={"outline"}
+                        className={`w-full pl-3 text-left font-normal ${
+                          !fechaVencimiento ? "text-muted-foreground" : ""
+                        }`}
+                      >
+                        {fechaVencimiento ? (
+                          format(fechaVencimiento, "PPP", { locale: es })
+                        ) : (
+                          <span>Seleccionar fecha</span>
+                        )}
+                        <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                      </Button>
                     </PopoverTrigger>
                     <PopoverContent className="w-auto p-0" align="start">
                       <Calendar
                         mode="single"
-                        selected={field.value}
-                        onSelect={field.onChange}
-                        disabled={(date) => date > new Date()}
+                        selected={fechaVencimiento}
+                        onSelect={setFechaVencimiento}
+                        disabled={(date) => date < new Date()}
                         initialFocus
                       />
                     </PopoverContent>
                   </Popover>
-                  <FormMessage className="text-xs" />
-                </FormItem>
-              )}
-            />
-          </div>
-
-          <div className="bg-slate-50 p-6 rounded-lg shadow-sm border border-slate-100">
-            <h3 className="text-lg font-medium mb-4 text-slate-800">
-              Agregar Productos
-            </h3>
-
-            <div className="grid grid-cols-1 md:grid-cols-12 gap-4 mb-6">
-              <div className="md:col-span-5">
-                <FormLabel className="text-sm font-medium">Producto</FormLabel>
-                <SelectorProducto
-                  productos={productos}
-                  onSelect={handleProductoSelect}
-                  selectedProducto={selectedProducto}
-                />
-              </div>
-
-              <div className="md:col-span-2">
-                <FormLabel className="text-sm font-medium">Cantidad</FormLabel>
-                <Input
-                  type="number"
-                  min="1"
-                  value={cantidad}
-                  onChange={(e) =>
-                    setCantidad(Number.parseInt(e.target.value) || 1)
-                  }
-                  className="w-full"
-                />
-              </div>
-
-              <div className="md:col-span-3">
-                <FormLabel className="text-sm font-medium">
-                  Precio Unitario
-                </FormLabel>
-                <Input
-                  type="number"
-                  min="0"
-                  step="0.01"
-                  value={precioUnitario}
-                  onChange={(e) =>
-                    setPrecioUnitario(Number.parseFloat(e.target.value) || 0)
-                  }
-                  className="w-full"
-                />
-              </div>
-
-              <div className="md:col-span-2 flex items-end">
-                <Button
-                  type="button"
-                  onClick={agregarDetalle}
-                  disabled={
-                    !selectedProducto || cantidad <= 0 || precioUnitario <= 0
-                  }
-                  className="w-full"
-                >
-                  <Plus className="h-4 w-4 mr-2" />
-                  Agregar
-                </Button>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-4">
-              <div>
-                <FormLabel className="text-sm font-medium">
-                  Número de Lote (opcional)
-                </FormLabel>
-                <Input
-                  value={numeroLote}
-                  onChange={(e) => setNumeroLote(e.target.value)}
-                  placeholder="Ingrese número de lote"
-                  className="w-full"
-                />
-              </div>
-
-              <div>
-                <FormLabel className="text-sm font-medium">
-                  Fecha de Vencimiento (opcional)
-                </FormLabel>
-                <Popover>
-                  <PopoverTrigger asChild>
-                    <Button
-                      variant={"outline"}
-                      className={`w-full pl-3 text-left font-normal ${
-                        !fechaVencimiento ? "text-muted-foreground" : ""
-                      }`}
-                    >
-                      {fechaVencimiento ? (
-                        format(fechaVencimiento, "PPP", { locale: es })
-                      ) : (
-                        <span>Seleccionar fecha</span>
-                      )}
-                      <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                    </Button>
-                  </PopoverTrigger>
-                  <PopoverContent className="w-auto p-0" align="start">
-                    <Calendar
-                      mode="single"
-                      selected={fechaVencimiento}
-                      onSelect={setFechaVencimiento}
-                      disabled={(date) => date < new Date()}
-                      initialFocus
-                    />
-                  </PopoverContent>
-                </Popover>
-              </div>
-            </div>
-          </div>
-
-          {detalles.length > 0 ? (
-            <Card className="shadow-md border-slate-200">
-              <CardContent className="p-0">
-                <div className="p-4 border-b bg-slate-50">
-                  <h3 className="text-lg font-medium text-slate-800">
-                    Productos Seleccionados
-                  </h3>
                 </div>
-                <div className="overflow-x-auto">
-                  <table className="w-full border-collapse">
-                    <thead>
-                      <tr className="bg-slate-100 text-slate-700">
-                        <th className="p-3 text-left font-medium">Producto</th>
-                        <th className="p-3 text-left font-medium">Cantidad</th>
-                        <th className="p-3 text-left font-medium">
-                          Precio Unit.
-                        </th>
-                        <th className="p-3 text-left font-medium">Subtotal</th>
-                        <th className="p-3 text-left font-medium">Lote</th>
-                        <th className="p-3 text-left font-medium">
-                          Vencimiento
-                        </th>
-                        <th className="p-3 text-center font-medium">
-                          Acciones
-                        </th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {detalles.map((detalle, index) => (
-                        <tr key={index} className="border-b hover:bg-slate-50">
-                          <td className="p-3">{detalle.nombreProducto}</td>
-                          <td className="p-3">
-                            {detalle.cantidad} {detalle.unidadMedida}
-                          </td>
-                          <td className="p-3">
-                            ${detalle.precioUnitario.toFixed(2)}
-                          </td>
-                          <td className="p-3">
-                            ${detalle.subtotal.toFixed(2)}
-                          </td>
-                          <td className="p-3">{detalle.numeroLote || "-"}</td>
-                          <td className="p-3">
-                            {detalle.fechaVencimiento
-                              ? format(detalle.fechaVencimiento, "dd/MM/yyyy")
-                              : "-"}
-                          </td>
-                          <td className="p-3 text-center">
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={() => eliminarDetalle(index)}
-                            >
-                              <Trash2 className="h-4 w-4 text-red-500" />
-                            </Button>
-                          </td>
+              </div>
+            </div>
+
+            {detalles.length > 0 ? (
+              <Card className="shadow-md border-slate-200">
+                <CardContent className="p-0">
+                  <div className="p-4 border-b bg-slate-50">
+                    <h3 className="text-lg font-medium text-slate-800">
+                      Productos Seleccionados
+                    </h3>
+                  </div>
+                  <div className="overflow-x-auto">
+                    <table className="w-full border-collapse">
+                      <thead>
+                        <tr className="bg-slate-100 text-slate-700">
+                          <th className="p-3 text-left font-medium">
+                            Producto
+                          </th>
+                          <th className="p-3 text-left font-medium">
+                            Cantidad
+                          </th>
+                          <th className="p-3 text-left font-medium">
+                            Precio Unit.
+                          </th>
+                          <th className="p-3 text-left font-medium">
+                            Subtotal
+                          </th>
+                          <th className="p-3 text-left font-medium">Lote</th>
+                          <th className="p-3 text-left font-medium">
+                            Vencimiento
+                          </th>
+                          <th className="p-3 text-center font-medium">
+                            Acciones
+                          </th>
                         </tr>
-                      ))}
-                    </tbody>
-                    <tfoot>
-                      <tr className="font-medium bg-slate-50">
-                        <td colSpan={3} className="p-3 text-right">
-                          Subtotal:
-                        </td>
-                        <td className="p-3">${subtotal.toFixed(2)}</td>
-                        <td colSpan={3}></td>
-                      </tr>
-                      <tr className="font-medium bg-slate-50">
-                        <td colSpan={3} className="p-3 text-right">
-                          IVA (19%):
-                        </td>
-                        <td className="p-3">${impuestos.toFixed(2)}</td>
-                        <td colSpan={3}></td>
-                      </tr>
-                      <tr className="font-medium text-lg bg-slate-50">
-                        <td colSpan={3} className="p-3 text-right">
-                          Total:
-                        </td>
-                        <td className="p-3 font-bold text-primary">
-                          ${total.toFixed(2)}
-                        </td>
-                        <td colSpan={3}></td>
-                      </tr>
-                    </tfoot>
-                  </table>
-                </div>
-              </CardContent>
-            </Card>
-          ) : (
-            <div className="bg-slate-50 p-6 rounded-lg border border-dashed border-slate-200 text-center">
-              <p className="text-slate-500">
-                No hay productos agregados a la compra
-              </p>
-            </div>
-          )}
-
-          <Button
-            type="submit"
-            className="w-full py-6 text-base font-medium"
-            disabled={isSubmitting}
-          >
-            {isSubmitting ? (
-              <>
-                <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                Procesando...
-              </>
+                      </thead>
+                      <tbody>
+                        {detalles.map((detalle, index) => (
+                          <tr
+                            key={index}
+                            className="border-b hover:bg-slate-50"
+                          >
+                            <td className="p-3">{detalle.nombreProducto}</td>
+                            <td className="p-3">
+                              {detalle.cantidad} {detalle.unidadMedida}
+                            </td>
+                            <td className="p-3">
+                              ${detalle.precioUnitario.toFixed(2)}
+                            </td>
+                            <td className="p-3">
+                              ${detalle.subtotal.toFixed(2)}
+                            </td>
+                            <td className="p-3">{detalle.numeroLote || "-"}</td>
+                            <td className="p-3">
+                              {detalle.fechaVencimiento
+                                ? format(detalle.fechaVencimiento, "dd/MM/yyyy")
+                                : "-"}
+                            </td>
+                            <td className="p-3 text-center">
+                              <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => eliminarDetalle(index)}
+                              >
+                                <Trash2 className="h-4 w-4 text-red-500" />
+                              </Button>
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                      <tfoot>
+                        <tr className="font-medium bg-slate-50">
+                          <td colSpan={3} className="p-3 text-right">
+                            Subtotal:
+                          </td>
+                          <td className="p-3">${subtotal.toFixed(2)}</td>
+                          <td colSpan={3}></td>
+                        </tr>
+                        <tr className="font-medium bg-slate-50">
+                          <td colSpan={3} className="p-3 text-right">
+                            IVA (19%):
+                          </td>
+                          <td className="p-3">${impuestos.toFixed(2)}</td>
+                          <td colSpan={3}></td>
+                        </tr>
+                        <tr className="font-medium text-lg bg-slate-50">
+                          <td colSpan={3} className="p-3 text-right">
+                            Total:
+                          </td>
+                          <td className="p-3 font-bold text-primary">
+                            ${total.toFixed(2)}
+                          </td>
+                          <td colSpan={3}></td>
+                        </tr>
+                      </tfoot>
+                    </table>
+                  </div>
+                </CardContent>
+              </Card>
             ) : (
-              "Registrar Compra"
+              <div className="bg-slate-50 p-6 rounded-lg border border-dashed border-slate-200 text-center">
+                <p className="text-slate-500">
+                  No hay productos agregados a la compra
+                </p>
+              </div>
             )}
-          </Button>
-        </form>
-      </Form>
+
+            <Button
+              type="submit"
+              className="w-full py-6 text-base font-medium"
+              disabled={isSubmitting}
+            >
+              {isSubmitting ? (
+                <>
+                  <Loader2 className="mr-2 h-5 w-5 animate-spin" />
+                  Procesando...
+                </>
+              ) : (
+                "Registrar Compra"
+              )}
+            </Button>
+          </form>
+        </Form>
+      )}
     </div>
   );
 }
