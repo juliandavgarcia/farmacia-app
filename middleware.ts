@@ -7,6 +7,7 @@ import {
   publicRoutes,
   DEFAULT_LOGIN_REDIRECT,
 } from "./routes";
+import { NextResponse } from "next/server";
 
 const { auth } = NextAuth(authConfig);
 
@@ -20,13 +21,13 @@ export default auth((req) => {
 
   // Ya está logueado e intenta entrar a /login o similares
   if (authRoutes.includes(path) && isLoggedIn) {
-    return Response.redirect(new URL(DEFAULT_LOGIN_REDIRECT, nextUrl));
+    return NextResponse.redirect(new URL(DEFAULT_LOGIN_REDIRECT, nextUrl));
   }
 
   // No logueado y no es ruta pública
   const isPublic = publicRoutes.includes(path) || authRoutes.includes(path);
   if (!isLoggedIn && !isPublic) {
-    return Response.redirect(new URL("/auth/login", nextUrl));
+    return NextResponse.redirect(new URL("/auth/login", nextUrl));
   }
 
   return; // permitir acceso
