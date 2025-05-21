@@ -123,7 +123,7 @@ const TablaHistorialCompras = () => {
         columns={historialCompraColumns}
         filterableColumns={["numeroFactura", "proveedor"]}
       />
-      <div className="flex space-x-3">
+      <div className="flex space-x-2">
         <GeneradorExcel
           data={data}
           columns={excelColumns}
