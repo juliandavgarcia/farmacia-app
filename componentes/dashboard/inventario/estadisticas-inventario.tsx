@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { AlertTriangle, ArrowDown, ArrowUp } from "lucide-react";
+import { AlertTriangle } from "lucide-react";
 import {
   Card,
   CardContent,
@@ -58,30 +58,6 @@ export default function InventarioStats({ producto }: InventarioStatsProps) {
                 Stock por debajo del mínimo recomendado ({stockMinimo})
               </p>
             )}
-          </div>
-
-          <div className="grid grid-cols-2 gap-4">
-            <div className="bg-muted/50 p-3 rounded-md">
-              <div className="flex items-center gap-2">
-                <div className="p-1.5 bg-green-100 dark:bg-green-900/20 rounded-full">
-                  <ArrowUp className="h-4 w-4 text-green-600 dark:text-green-400" />
-                </div>
-                <span className="text-sm font-medium">Entradas</span>
-              </div>
-              <p className="text-2xl font-bold mt-1">0</p>
-              <p className="text-xs text-muted-foreground">Últimos 30 días</p>
-            </div>
-
-            <div className="bg-muted/50 p-3 rounded-md">
-              <div className="flex items-center gap-2">
-                <div className="p-1.5 bg-amber-100 dark:bg-amber-900/20 rounded-full">
-                  <ArrowDown className="h-4 w-4 text-amber-600 dark:text-amber-400" />
-                </div>
-                <span className="text-sm font-medium">Salidas</span>
-              </div>
-              <p className="text-2xl font-bold mt-1">0</p>
-              <p className="text-xs text-muted-foreground">Últimos 30 días</p>
-            </div>
           </div>
 
           <div className="bg-muted/50 p-3 rounded-md">

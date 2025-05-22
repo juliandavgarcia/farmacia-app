@@ -2,6 +2,7 @@
 "use client";
 
 import GeneradorExcel from "@/componentes/generadores/generador-excel";
+import GeneradorPDF from "@/componentes/generadores/generador-pdf";
 import { GeneradorTabla } from "@/componentes/generadores/generador-tabla";
 import { Button } from "@/componentes/ui/button";
 import {
@@ -122,13 +123,15 @@ const TablaHistorialVentas = () => {
         columns={historialVentaColumns}
         filterableColumns={["numeroFactura", "cliente"]}
       />
-
-      <GeneradorExcel
-        data={data}
-        columns={columnasExcel}
-        fileName="historial_ventas"
-        headerTitle="Historial de Ventas"
-      />
+      <div className="space-x-2">
+        <GeneradorExcel
+          data={data}
+          columns={columnasExcel}
+          fileName="historial_ventas"
+          headerTitle="Historial de Ventas"
+        />
+        <GeneradorPDF data={data} columns={columnasExcel} />
+      </div>
     </div>
   );
 };
