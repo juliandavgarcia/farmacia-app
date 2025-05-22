@@ -2,7 +2,7 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
-import { ArrowLeft, Barcode, Edit, Package, Plus } from "lucide-react";
+import { ArrowLeft, Barcode, Package } from "lucide-react";
 
 import { Badge } from "@/componentes/ui/badge";
 import { Button } from "@/componentes/ui/button";
@@ -79,26 +79,6 @@ export default async function ProductoDetallePage({
           <p className="text-muted-foreground mt-1">
             Detalle del producto e inventario
           </p>
-        </div>
-        <div className="flex items-center gap-2">
-          <Button variant="outline" asChild>
-            <Link
-              href={`/dashboard/productos/${producto.id}/editar`}
-              className="flex items-center gap-1"
-            >
-              <Edit className="h-4 w-4" />
-              Editar
-            </Link>
-          </Button>
-          <Button asChild>
-            <Link
-              href={`/dashboard/productos/${producto.id}/inventario/agregar`}
-              className="flex items-center gap-1"
-            >
-              <Plus className="h-4 w-4" />
-              Agregar Inventario
-            </Link>
-          </Button>
         </div>
       </div>
 
@@ -217,7 +197,9 @@ export default async function ProductoDetallePage({
                     No hay inventario registrado para este producto
                   </p>
                   <Button asChild className="mt-4">
-                    <Link href={`/dashboard/productos/${producto.id}/inventario/agregar`}>
+                    <Link
+                      href={`/dashboard/productos/${producto.id}/inventario/agregar`}
+                    >
                       Agregar Inventario
                     </Link>
                   </Button>
@@ -229,7 +211,6 @@ export default async function ProductoDetallePage({
                       <TableHead>Lote</TableHead>
                       <TableHead>Fecha de Vencimiento</TableHead>
                       <TableHead className="text-right">Cantidad</TableHead>
-                      <TableHead className="text-right">Acciones</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -250,15 +231,6 @@ export default async function ProductoDetallePage({
                         <TableCell className="text-right font-medium">
                           {inventario.cantidad}
                         </TableCell>
-                        <TableCell className="text-right">
-                          <Button variant="outline" size="sm" asChild>
-                            <Link
-                              href={`/productos/${producto.id}/inventario/${inventario.id}`}
-                            >
-                              Ajustar
-                            </Link>
-                          </Button>
-                        </TableCell>
                       </TableRow>
                     ))}
                   </TableBody>
@@ -277,21 +249,6 @@ export default async function ProductoDetallePage({
         <div className="space-y-6">
           {/* Estadísticas de inventario */}
           <InventarioStats producto={producto} />
-
-          {/* Historial de movimientos */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Historial de Movimientos</CardTitle>
-              <CardDescription>
-                Últimos movimientos de inventario
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="text-center py-6">
-                <p className="text-muted-foreground">Próximamente</p>
-              </div>
-            </CardContent>
-          </Card>
         </div>
       </div>
     </div>

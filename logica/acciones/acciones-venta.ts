@@ -40,7 +40,7 @@ export const obtenerHistorialVentas = async (): Promise<MensajeRespuesta> => {
       numeroFactura: venta.numeroFactura,
       fecha: venta.fecha,
       cliente: venta.cliente?.nombre ?? "Cliente no registrado",
-      total: venta.total,
+      total: Number(venta.total),
     }));
 
     return { datos: ventasFormateadas };

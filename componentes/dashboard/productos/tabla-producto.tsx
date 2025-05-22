@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import { useEffect, useState } from "react";
@@ -19,12 +18,10 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/componentes/ui/dropdown-menu";
 import Link from "next/link";
 import { MoreHorizontal, Package } from "lucide-react";
-import { toast } from "sonner";
 import { Button } from "@/componentes/ui/button";
 import { Badge } from "@/componentes/ui/badge";
 
@@ -51,80 +48,6 @@ const TablaProducto = () => {
         return (
           <Badge variant="outline">{row.getValue("categoriaNombre")}</Badge>
         );
-      },
-    },
-    {
-      accessorKey: "codigoBarras",
-      header: "Código de Barras",
-      cell: ({ row }) => {
-        return <span>{row.getValue("codigoBarras") || "N/A"}</span>;
-      },
-    },
-    {
-      accessorKey: "precioCompra",
-      header: "Precio Compra",
-      cell: ({ row }) => {
-        const valor = row.getValue("precioCompra") as number;
-        return (
-          <span className="text-right">
-            {new Intl.NumberFormat("es-CO", {
-              style: "currency",
-              currency: "COP",
-              minimumFractionDigits: 2,
-            }).format(valor)}
-          </span>
-        );
-      },
-    },
-    {
-      accessorKey: "precioVenta",
-      header: "Precio de Venta",
-      cell: ({ row }) => {
-        const valor = row.getValue("precioVenta") as number;
-        return (
-          <span className="text-right">
-            {new Intl.NumberFormat("es-CO", {
-              style: "currency",
-              currency: "COP",
-              minimumFractionDigits: 0,
-            }).format(valor)}
-          </span>
-        );
-      },
-    },
-    {
-      accessorKey: "inventarios",
-      header: "Stock",
-      cell: ({ row }) => {
-        const inventarios = row.getValue("inventarios") as any[];
-        const total =
-          inventarios?.reduce((acc, inv) => acc + inv.cantidad, 0) || 0;
-        const variant = total === 0 ? "destructive" : "outline";
-        return (
-          <Badge variant={variant} className="ml-auto">
-            {total}
-          </Badge>
-        );
-      },
-    },
-    {
-      accessorKey: "estado",
-      header: "Estado",
-      cell: ({ row }) => {
-        const estado = row.getValue("estado");
-        return (
-          <Badge variant={estado ? "default" : "secondary"}>
-            {estado ? "Activo" : "Inactivo"}
-          </Badge>
-        );
-      },
-    },
-    {
-      accessorKey: "descripcion",
-      header: "Descripción",
-      cell: ({ row }) => {
-        const descripcion: string = row.getValue("descripcion") as string;
-        return <span>{descripcion || "No hay descripción"}</span>;
       },
     },
     {
@@ -181,35 +104,8 @@ const TablaProducto = () => {
                 <DropdownMenuItem asChild>
                   <Link href={`/dashboard/productos/${producto.id}`}>
                     <Package className="h-4 w-4" />
-                    Ver detalles
+                    Ver inventario
                   </Link>
-                </DropdownMenuItem>
-
-                <DropdownMenuItem asChild>
-                  <Link
-                    href={`/dashboard/productos/${producto.id}/inventario`}
-                    className="flex items-center"
-                  >
-                    <Package className="h-4 w-4" />
-                    Gestionar inventario
-                  </Link>
-                </DropdownMenuItem>
-
-                <DropdownMenuSeparator />
-
-                <DropdownMenuItem
-                  onClick={() => {
-                    if (producto.id) {
-                      navigator.clipboard.writeText(
-                        producto.codigoBarras || "No disponible"
-                      );
-                      toast("ID copiado");
-                    } else {
-                      toast.error("ID no disponible");
-                    }
-                  }}
-                >
-                  Copiar Código de Barras
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
