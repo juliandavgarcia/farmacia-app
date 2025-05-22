@@ -24,9 +24,14 @@ const ContadorCompra: React.FC = () => {
       const mesRes = await obtenerComprasMes();
 
       if (totalRes.datos) setCantidadTotal(totalRes.datos);
-      if (hoyRes.datos) setComprasHoy(hoyRes.datos);
-      if (semanaRes.datos) setComprasSemana(semanaRes.datos);
-      if (mesRes.datos) setComprasMes(mesRes.datos);
+      if (hoyRes.datos)
+        setComprasHoy(Array.isArray(hoyRes.datos) ? hoyRes.datos.length : 0);
+      if (semanaRes.datos)
+        setComprasSemana(
+          Array.isArray(semanaRes.datos) ? semanaRes.datos.length : 0
+        );
+      if (mesRes.datos)
+        setComprasMes(Array.isArray(mesRes.datos) ? mesRes.datos.length : 0);
     };
 
     cargarDatos();
