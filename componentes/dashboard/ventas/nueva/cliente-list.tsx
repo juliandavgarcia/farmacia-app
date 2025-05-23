@@ -71,7 +71,6 @@ export function ClienteList({
           <TableRow>
             <TableHead>Documento</TableHead>
             <TableHead>Nombre</TableHead>
-            <TableHead>Teléfono</TableHead>
             <TableHead className="w-[100px]">Acción</TableHead>
           </TableRow>
         </TableHeader>
@@ -80,11 +79,10 @@ export function ClienteList({
             <TableRow key={cliente.id}>
               <TableCell>{cliente.documento}</TableCell>
               <TableCell>{cliente.nombre}</TableCell>
-              <TableCell>{cliente.telefono || "-"}</TableCell>
               <TableCell>
                 <Button
-                  variant="sky"
-                  size="sm"
+                  variant="green"
+                  size="icon"
                   onClick={() =>
                     onClienteSeleccionado({
                       id: cliente.id,
@@ -92,7 +90,7 @@ export function ClienteList({
                     })
                   }
                 >
-                  Seleccionar
+                  +
                 </Button>
               </TableCell>
             </TableRow>
