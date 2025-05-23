@@ -1,14 +1,6 @@
 import { addDays, isBefore, isAfter } from "date-fns";
-import {
-  AlertTriangle,
-  Calendar,
-  Clock,
-  Filter,
-  RefreshCw,
-} from "lucide-react";
+import { AlertTriangle, Calendar, Clock } from "lucide-react";
 
-import { Badge } from "@/componentes/ui/badge";
-import { Button } from "@/componentes/ui/button";
 import {
   Card,
   CardContent,
@@ -23,7 +15,6 @@ import {
   TabsTrigger,
 } from "@/componentes/ui/tabs";
 import { prisma } from "@/lib/db";
-import VencimientosFilter from "@/componentes/dashboard/vencimientos/vencimientos-filter";
 import VencimientosTable from "@/componentes/dashboard/vencimientos/vencimientos-table";
 import VencimientosStats from "@/componentes/dashboard/vencimientos/vencimientos-stats";
 
@@ -35,14 +26,13 @@ async function getProductosVencimiento() {
   const treintaDias = addDays(hoy, 30);
   const noventaDias = addDays(hoy, 90);
 
-  // Obtener todos los inventarios con fecha de vencimiento
   const inventarios = await prisma.inventario.findMany({
     where: {
       fechaVencimiento: {
         not: null,
       },
       cantidad: {
-        gt: 0, // Solo productos con stock
+        gt: 0,
       },
     },
     include: {
@@ -57,27 +47,36 @@ async function getProductosVencimiento() {
     },
   });
 
-  // Clasificar los productos por su fecha de vencimiento
-  const vencidos = inventarios.filter(
+  // Serializar campos Decimal a number
+  const inventariosSerializados = inventarios.map((inv) => ({
+    ...inv,
+    producto: {
+      ...inv.producto,
+      precioCompra: Number(inv.producto.precioCompra),
+      precioVenta: Number(inv.producto.precioVenta),
+    },
+  }));
+
+  const vencidos = inventariosSerializados.filter(
     (inv) =>
       inv.fechaVencimiento && isBefore(new Date(inv.fechaVencimiento), hoy)
   );
 
-  const proximosAVencer = inventarios.filter(
+  const proximosAVencer = inventariosSerializados.filter(
     (inv) =>
       inv.fechaVencimiento &&
       isAfter(new Date(inv.fechaVencimiento), hoy) &&
       isBefore(new Date(inv.fechaVencimiento), treintaDias)
   );
 
-  const medioTermino = inventarios.filter(
+  const medioTermino = inventariosSerializados.filter(
     (inv) =>
       inv.fechaVencimiento &&
       isAfter(new Date(inv.fechaVencimiento), treintaDias) &&
       isBefore(new Date(inv.fechaVencimiento), noventaDias)
   );
 
-  const largoTermino = inventarios.filter(
+  const largoTermino = inventariosSerializados.filter(
     (inv) =>
       inv.fechaVencimiento &&
       isAfter(new Date(inv.fechaVencimiento), noventaDias)
@@ -88,27 +87,13 @@ async function getProductosVencimiento() {
     proximosAVencer,
     medioTermino,
     largoTermino,
-    todos: inventarios,
+    todos: inventariosSerializados,
   };
 }
 
-export default async function VencimientosPage({
-  searchParams,
-}: {
-  searchParams: { [key: string]: string | string[] | undefined };
-}) {
+export default async function VencimientosPage() {
   const { vencidos, proximosAVencer, medioTermino, largoTermino, todos } =
     await getProductosVencimiento();
-
-  // Obtener categorías para los filtros
-  const categorias = await prisma.categoria.findMany({
-    orderBy: {
-      nombre: "asc",
-    },
-  });
-
-  // Determinar la pestaña activa basada en los parámetros de búsqueda o usar "vencidos" por defecto
-  const tabActiva = searchParams.tab || "vencidos";
 
   return (
     <div className="mx-auto p-4 space-y-6">
@@ -121,20 +106,6 @@ export default async function VencimientosPage({
             Monitoreo y gestión de productos próximos a vencer
           </p>
         </div>
-        <div className="flex items-center gap-2">
-          <Button
-            variant="outline"
-            size="sm"
-            className="flex items-center gap-1"
-          >
-            <RefreshCw className="h-4 w-4" />
-            Actualizar
-          </Button>
-          <Button size="sm" className="flex items-center gap-1">
-            <Filter className="h-4 w-4" />
-            Exportar Reporte
-          </Button>
-        </div>
       </div>
 
       {/* Estadísticas de vencimientos */}
@@ -145,38 +116,20 @@ export default async function VencimientosPage({
         largoTermino={largoTermino.length}
       />
 
-      {/* Filtros */}
-      <VencimientosFilter categorias={categorias} />
-
       {/* Tabs para diferentes períodos de vencimiento */}
-      <Tabs defaultValue={tabActiva as string} className="w-full">
-        <TabsList className="grid grid-cols-4 mb-4">
+      <Tabs defaultValue={"todos"} className="w-full">
+        <TabsList className="grid grid-cols-4">
           <TabsTrigger value="vencidos" className="flex items-center gap-1">
-            <AlertTriangle className="h-4 w-4 text-destructive" />
             Vencidos
-            <Badge variant="destructive" className="ml-1">
-              {vencidos.length}
-            </Badge>
           </TabsTrigger>
           <TabsTrigger value="proximos" className="flex items-center gap-1">
-            <Clock className="h-4 w-4 text-warning" />
             30 días
-            <Badge variant="outline" className="ml-1">
-              {proximosAVencer.length}
-            </Badge>
           </TabsTrigger>
           <TabsTrigger value="medio" className="flex items-center gap-1">
-            <Calendar className="h-4 w-4" />
             90 días
-            <Badge variant="outline" className="ml-1">
-              {medioTermino.length}
-            </Badge>
           </TabsTrigger>
           <TabsTrigger value="todos" className="flex items-center gap-1">
             Todos
-            <Badge variant="outline" className="ml-1">
-              {todos.length}
-            </Badge>
           </TabsTrigger>
         </TabsList>
 

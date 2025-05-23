@@ -29,7 +29,7 @@ export default function VencimientosStats({
   return (
     <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
       {/* Vencidos */}
-      <div className="bg-white dark:bg-gray-950 rounded-lg border p-4 shadow-sm">
+      <div className="bg-white dark:bg-card rounded-lg border p-4 shadow-sm">
         <div className="flex items-center gap-2">
           <div className="p-2 bg-red-100 dark:bg-red-900/20 rounded-full">
             <AlertTriangle className="h-5 w-5 text-red-600 dark:text-red-400" />
@@ -53,7 +53,7 @@ export default function VencimientosStats({
       </div>
 
       {/* Próximos a vencer */}
-      <div className="bg-white dark:bg-gray-950 rounded-lg border p-4 shadow-sm">
+      <div className="bg-card rounded-lg border p-4 shadow-sm">
         <div className="flex items-center gap-2">
           <div className="p-2 bg-amber-100 dark:bg-amber-900/20 rounded-full">
             <Clock className="h-5 w-5 text-amber-600 dark:text-amber-400" />
@@ -77,7 +77,7 @@ export default function VencimientosStats({
       </div>
 
       {/* Medio término */}
-      <div className="bg-white dark:bg-gray-950 rounded-lg border p-4 shadow-sm">
+      <div className="bg-white dark:bg-card rounded-lg border p-4 shadow-sm">
         <div className="flex items-center gap-2">
           <div className="p-2 bg-blue-100 dark:bg-blue-900/20 rounded-full">
             <CalendarDays className="h-5 w-5 text-blue-600 dark:text-blue-400" />
@@ -101,7 +101,7 @@ export default function VencimientosStats({
       </div>
 
       {/* Largo término */}
-      <div className="bg-white dark:bg-gray-950 rounded-lg border p-4 shadow-sm">
+      <div className="bg-white dark:bg-card rounded-lg border p-4 shadow-sm">
         <div className="flex items-center gap-2">
           <div className="p-2 bg-green-100 dark:bg-green-900/20 rounded-full">
             <CalendarCheck className="h-5 w-5 text-green-600 dark:text-green-400" />
