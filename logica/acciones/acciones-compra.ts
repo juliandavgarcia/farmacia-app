@@ -111,7 +111,7 @@ export const obtenerComprasHoy = async (): Promise<MensajeRespuesta> => {
         },
       },
     });
-    return { datos: comprasHoy };
+    return { datos: comprasHoy.map(convertirDecimal) };
   } catch (error) {
     console.error("Error al obtener las compras de hoy:", error);
     return { error: "Error al obtener las compras de hoy." };
@@ -321,5 +321,142 @@ export async function obtenerCompras(limit = 10) {
   } catch (error) {
     console.error("Error al obtener compras:", error);
     return [];
+  }
+}
+
+export async function getDailySalesCount() {
+  try {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const tomorrow = new Date(today);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+
+    const count = await prisma.venta.count({
+      where: {
+        fecha: {
+          gte: today,
+          lt: tomorrow,
+        },
+        estado: "COMPLETADA",
+      },
+    });
+
+    return count;
+  } catch (error) {
+    console.error("Error fetching daily sales count:", error);
+    return 0;
+  }
+}
+
+export async function getTotalSalesAmount() {
+  try {
+    const result = await prisma.venta.aggregate({
+      _sum: {
+        total: true,
+      },
+      where: {
+        estado: "COMPLETADA",
+      },
+    });
+
+    return Number(result._sum.total) || 0;
+  } catch (error) {
+    console.error("Error fetching total sales amount:", error);
+    return 0;
+  }
+}
+
+export async function getTodaySalesAmount() {
+  try {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const tomorrow = new Date(today);
+    tomorrow.setDate(tomorrow.getDate() + 1);
+
+    const result = await prisma.venta.aggregate({
+      _sum: {
+        total: true,
+      },
+      where: {
+        fecha: {
+          gte: today,
+          lt: tomorrow,
+        },
+        estado: "COMPLETADA",
+      },
+    });
+
+    return Number(result._sum.total) || 0;
+  } catch (error) {
+    console.error("Error fetching today's sales amount:", error);
+    return 0;
+  }
+}
+
+export async function getTotalProductsCount() {
+  try {
+    const count = await prisma.producto.count({
+      where: {
+        estado: true,
+      },
+    });
+
+    return count;
+  } catch (error) {
+    console.error("Error fetching total products count:", error);
+    return 0;
+  }
+}
+
+export async function getYesterdaySalesCount() {
+  try {
+    const yesterday = new Date();
+    yesterday.setDate(yesterday.getDate() - 1);
+    yesterday.setHours(0, 0, 0, 0);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    const count = await prisma.venta.count({
+      where: {
+        fecha: {
+          gte: yesterday,
+          lt: today,
+        },
+        estado: "COMPLETADA",
+      },
+    });
+
+    return count;
+  } catch (error) {
+    console.error("Error fetching yesterday sales count:", error);
+    return 0;
+  }
+}
+
+export async function getYesterdaySalesAmount() {
+  try {
+    const yesterday = new Date();
+    yesterday.setDate(yesterday.getDate() - 1);
+    yesterday.setHours(0, 0, 0, 0);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    const result = await prisma.venta.aggregate({
+      _sum: {
+        total: true,
+      },
+      where: {
+        fecha: {
+          gte: yesterday,
+          lt: today,
+        },
+        estado: "COMPLETADA",
+      },
+    });
+
+    return Number(result._sum.total) || 0;
+  } catch (error) {
+    console.error("Error fetching yesterday sales amount:", error);
+    return 0;
   }
 }
