@@ -105,14 +105,14 @@ const FacturaVentaPDF = ({
         doc.line(margin, 30, pageWidth - margin, 30);
         doc.addImage(qrCodeDataURL, "PNG", pageWidth - margin - 25, 10, 25, 25);
 
-        doc.roundedRect(margin, 35, pageWidth - margin * 2, 45, 2, 2, "FD");
+        // Cambiado de "FD" a "S" para solo el contorno (stroke) y no rellenar
+        doc.roundedRect(margin, 35, pageWidth - margin * 2, 45, 2, 2, "S");
         doc.line(colMid, 35, colMid, 80);
 
         agregarTexto("FACTURA:", margin + 5, 45, true);
         agregarTexto(`#${datos.numeroFactura}`, margin + 35, 45);
         agregarTexto("FECHA:", margin + 5, 53, true);
 
-        // Aquí validamos la fecha para evitar el error
         const fechaFormateada = esFechaValida(datos.fecha)
           ? format(datos.fecha, "dd/MM/yyyy", { locale: es })
           : "N/A";

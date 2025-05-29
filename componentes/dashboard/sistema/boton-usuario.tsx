@@ -8,8 +8,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/componentes/ui/dropdown-menu";
-import { FiUser, FiSettings, FiLogOut } from "react-icons/fi";
-import Link from "next/link";
+import { FiLogOut } from "react-icons/fi";
 import { User } from "lucide-react";
 import { Button } from "@/componentes/ui/button";
 import { cerrarSesionUsuario } from "@/logica/acciones/acciones-login";
@@ -23,22 +22,7 @@ export function BotonUsuario() {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-56 mr-2">
-        {/* Etiqueta de usuario eliminada */}
-        <DropdownMenuGroup>
-          <DropdownMenuItem>
-            <FiUser className="mr-2 h-4 w-4 text-blue-700 dark:text-white" />
-            <span>Perfil</span>
-          </DropdownMenuItem>
-          <DropdownMenuItem asChild>
-            <Link
-              href="/dashboard/settings"
-              className="w-full flex items-center"
-            >
-              <FiSettings className="mr-2 h-4 w-4 text-blue-700 dark:text-white" />
-              <span>Configuración</span>
-            </Link>
-          </DropdownMenuItem>
-        </DropdownMenuGroup>
+        <DropdownMenuGroup></DropdownMenuGroup>
         <DropdownMenuSeparator />
         <DropdownMenuItem
           onClick={cerrarSesionUsuario}
