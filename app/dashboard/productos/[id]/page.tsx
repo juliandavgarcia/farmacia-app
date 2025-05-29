@@ -48,9 +48,11 @@ async function getProducto(id: string) {
 export default async function ProductoDetallePage({
   params,
 }: {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }) {
-  const producto = await getProducto(params.id);
+  // Await the params Promise
+  const { id } = await params;
+  const producto = await getProducto(id);
 
   if (!producto) {
     notFound();
