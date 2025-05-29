@@ -36,11 +36,13 @@ export const obtenerHistorialVentas = async (): Promise<MensajeRespuesta> => {
       },
     });
 
+    // Transform Decimal to Number and Date to ISO string for client-side compatibility
     const ventasFormateadas = historial.map((venta) => ({
+      id: venta.id,
       numeroFactura: venta.numeroFactura,
-      fecha: venta.fecha,
+      fecha: venta.fecha.toISOString(), // Convert Date object to ISO string
       cliente: venta.cliente?.nombre ?? "Cliente no registrado",
-      total: Number(venta.total),
+      total: venta.total.toNumber(), // Convert Decimal to Number
     }));
 
     return { datos: ventasFormateadas };
@@ -58,8 +60,23 @@ export const obtenerVentaPorId = async (
       where: { id: ventaId },
       include: {
         cliente: true,
-        detalles: {},
-        usuario: true,
+        detalles: {
+          include: {
+            inventario: {
+              include: {
+                producto: {
+                  select: {
+                    nombre: true,
+                    descripcion: true,
+                  },
+                },
+              },
+            },
+          },
+        },
+        usuario: {
+          select: { nombre: true },
+        },
       },
     });
 
@@ -67,8 +84,37 @@ export const obtenerVentaPorId = async (
       return { error: MENSAJES.VENTA_NO_ENCONTRADA };
     }
 
-    return { datos: venta };
-  } catch (error) {
+    const serializedVenta = {
+      ...venta,
+      fecha: venta.fecha.toISOString(),
+      subtotal: venta.subtotal.toNumber(),
+      iva: venta.iva.toNumber(),
+      total: venta.total.toNumber(),
+      detalles: venta.detalles.map((detalle) => ({
+        ...detalle,
+        precioUnitario: detalle.precioUnitario.toNumber(),
+        subtotal: detalle.subtotal.toNumber(),
+        inventario: {
+          ...detalle.inventario,
+          producto: {
+            ...detalle.inventario.producto,
+          },
+        },
+      })),
+      cliente: venta.cliente
+        ? {
+            ...venta.cliente,
+            creadoEn: venta.cliente.creadoEn.toISOString(),
+            actualizadoEn: venta.cliente.actualizadoEn.toISOString(),
+          }
+        : undefined,
+      usuario: {
+        ...venta.usuario,
+      },
+    };
+
+    return { datos: serializedVenta };
+  } catch (error: any) {
     console.error("Error al obtener la venta:", error);
     return { error: MENSAJES.ERROR_OBTENER_VENTA };
   }
@@ -117,20 +163,9 @@ export async function crearVenta(data: VentaData) {
       };
     }
 
-    // Obtener el usuario actual (en producción)
-    // const session = await auth()
-    // if (!session || !session.user) {
-    //   return {
-    //     error: "No se ha iniciado sesión",
-    //   }
-    // }
-    // const usuarioId = session.user.id
-
     // Para desarrollo, usar un ID fijo
     const usuarioId = "clhz2kxu00000jz0g5rfmjpca";
 
-    // Generar número de factura único
-    // Formato: F-YYYYMMDD-XXXX (donde XXXX es un número secuencial)
     const fecha = new Date();
     const fechaStr = fecha.toISOString().slice(0, 10).replace(/-/g, "");
     const random = Math.floor(Math.random() * 10000)
@@ -257,8 +292,6 @@ async function registrarActividad({
   usuarioId: string;
   referenciaId?: string;
 }) {
-  // Esta función podría implementarse para registrar actividades en una tabla de auditoría
-  // Por ahora, solo registramos en la consola
   console.log(
     `[ACTIVIDAD] ${tipo}: ${descripcion} (Usuario: ${usuarioId}, Ref: ${referenciaId})`
   );
@@ -271,16 +304,6 @@ async function registrarActividad({
  */
 export async function anularVenta(ventaId: string) {
   try {
-    // Obtener el usuario actual (en producción)
-    // const session = await auth()
-    // if (!session || !session.user) {
-    //   return {
-    //     error: "No se ha iniciado sesión",
-    //   }
-    // }
-    // const usuarioId = session.user.id
-
-    // Para desarrollo, usar un ID fijo
     const usuarioId = "clhz2kxu00000jz0g5rfmjpca";
 
     // Verificar que la venta exista y no esté ya anulada

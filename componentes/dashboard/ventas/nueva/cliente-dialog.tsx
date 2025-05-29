@@ -46,7 +46,7 @@ export function ClienteDialog({ onClienteSeleccionado }: ClienteDialogProps) {
       <DialogTrigger asChild>
         <Button variant="outline">Seleccionar Cliente</Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[600px]">
+      <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>Gestión de Clientes</DialogTitle>
         </DialogHeader>

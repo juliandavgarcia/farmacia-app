@@ -207,6 +207,9 @@ export const obtenerProveedoresMes = async (): Promise<MensajeRespuesta> => {
           gte: inicioMes,
         },
       },
+      orderBy: {
+        nombre: "asc",
+      },
     });
     return { data: cantidadMes };
   } catch (error) {

@@ -135,7 +135,11 @@ export const obtenerCategoriaPorId = async (
 
 export const obtenerCategorias = async (): Promise<MensajeRespuesta> => {
   try {
-    const categorias = await prisma.categoria.findMany();
+    const categorias = await prisma.categoria.findMany({
+      orderBy: {
+        nombre: "asc",
+      },
+    });
     return { data: categorias };
   } catch (error) {
     console.error("Error al obtener las categorías:", error);

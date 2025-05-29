@@ -71,12 +71,9 @@ const historialVentaColumns: ColumnDef<HistorialVenta>[] = [
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
             <DropdownMenuItem
-              onClick={() => router.push(`/ventas/${venta.id}`)}
+              onClick={() => router.push(`/dashboard/ventas/${venta.id}`)}
             >
               Ver detalles
-            </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => window.print()}>
-              Imprimir
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

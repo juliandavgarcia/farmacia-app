@@ -192,6 +192,9 @@ export const obtenerProductosActivos = async (): Promise<RespuestaProducto> => {
           },
         },
       },
+      orderBy: {
+        nombre: "asc", // Orden alfabético ascendente (A-Z)
+      },
     });
 
     // Convertimos el precioVenta de Decimal a number directamente

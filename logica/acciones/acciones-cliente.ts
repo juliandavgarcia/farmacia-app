@@ -141,13 +141,18 @@ export const obtenerClientePorId = async (
 
 export const obtenerClientes = async (): Promise<RespuestaCliente> => {
   try {
-    const clientes = await prisma.cliente.findMany();
+    const clientes = await prisma.cliente.findMany({
+      orderBy: {
+        nombre: 'asc',
+      },
+    });
     return { datos: clientes };
   } catch (error) {
     console.error("Error al obtener los clientes:", error);
     return { error: MENSAJES.NO_ENCONTRADO };
   }
 };
+
 
 export const obtenerCantidadClientes = async (): Promise<RespuestaCliente> => {
   try {

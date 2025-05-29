@@ -350,9 +350,6 @@ export default function TablaHistorialCompras() {
                           >
                             Ver detalles
                           </DropdownMenuItem>
-                          <DropdownMenuItem onClick={() => window.print()}>
-                            Imprimir
-                          </DropdownMenuItem>
                         </DropdownMenuContent>
                       </DropdownMenu>
                     </TableCell>

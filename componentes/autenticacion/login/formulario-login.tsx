@@ -121,16 +121,6 @@ export function FormularioLogin({
                     {isPending ? "Cargando..." : "Iniciar sesión"}
                   </Button>
                 </div>
-
-                <div className="text-center text-sm">
-                  ¿No tienes una cuenta?{" "}
-                  <a
-                    href="/auth/register"
-                    className="underline underline-offset-4 hover:text-primary"
-                  >
-                    Regístrate
-                  </a>
-                </div>
               </div>
             </form>
           </Form>

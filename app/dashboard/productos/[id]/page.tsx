@@ -196,13 +196,6 @@ export default async function ProductoDetallePage({
                   <p className="mt-2 text-muted-foreground">
                     No hay inventario registrado para este producto
                   </p>
-                  <Button asChild className="mt-4">
-                    <Link
-                      href={`/dashboard/productos/${producto.id}/inventario/agregar`}
-                    >
-                      Agregar Inventario
-                    </Link>
-                  </Button>
                 </div>
               ) : (
                 <Table>
