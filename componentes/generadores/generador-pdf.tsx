@@ -5,13 +5,21 @@ import autoTable from "jspdf-autotable";
 import { Button } from "@/componentes/ui/button";
 import { Download } from "lucide-react";
 
+/**
+ * Props para el componente GeneradorPDF.
+ * @template T Tipo genérico de los datos a exportar.
+ */
 interface ExportButtonProps<T> {
-  data: T[];
-  columns: { key: string; header: string }[];
-  fileName?: string;
-  headerTitle?: string;
+  data: T[]; // Datos a exportar
+  columns: { key: string; header: string }[]; // Columnas a mostrar (clave y encabezado)
+  fileName?: string; // Nombre del archivo PDF
+  headerTitle?: string; // Título del reporte
 }
 
+/**
+ * Componente que genera y descarga un archivo PDF a partir de una tabla de datos.
+ * Utiliza jsPDF y autoTable para la generación.
+ */
 const GeneradorPDF = <T,>({
   data,
   columns,
@@ -24,10 +32,12 @@ const GeneradorPDF = <T,>({
     const pageHeight = doc.internal.pageSize.getHeight();
     const margin = 10;
 
+    // Información fija de la empresa
     const empresaNombre = "Farmacol";
     const empresaDireccion = "Calle Ficticia 123, Ciudad, País";
     const empresaContacto = "contacto@farmacol.com | +123 456 7890";
 
+    // Fecha y hora actual para el reporte
     const fechaGeneracion = new Date().toLocaleString("es-ES", {
       year: "numeric",
       month: "long",
@@ -37,6 +47,9 @@ const GeneradorPDF = <T,>({
       second: "2-digit",
     });
 
+    /**
+     * Agrega un encabezado con el nombre de la empresa, el título del reporte y la fecha.
+     */
     const addHeader = () => {
       doc.setFontSize(12);
       doc.text(empresaNombre, margin, 15);
@@ -52,6 +65,9 @@ const GeneradorPDF = <T,>({
       });
     };
 
+    /**
+     * Agrega un pie de página con información de contacto y número de página.
+     */
     const addFooter = () => {
       const pageNumber = doc.getNumberOfPages();
       doc.setFontSize(8);
@@ -62,8 +78,10 @@ const GeneradorPDF = <T,>({
       });
     };
 
+    // Cabecera de la tabla con numeración
     const tableHead = ["N°", ...columns.map((col) => col.header)];
 
+    // Cuerpo de la tabla con datos
     const tableBody = data.map((item, index) => [
       (index + 1).toString(),
       ...columns.map((col) => {
@@ -72,6 +90,7 @@ const GeneradorPDF = <T,>({
       }),
     ]);
 
+    // Generación de la tabla usando autoTable
     autoTable(doc, {
       head: [tableHead],
       body: tableBody,
@@ -89,9 +108,11 @@ const GeneradorPDF = <T,>({
       },
     });
 
+    // Descarga el archivo PDF
     doc.save(`${fileName}.pdf`);
   };
 
+  // Botón que dispara la generación del PDF
   return (
     <Button onClick={exportToPDF} variant="destructive" className="mt-4">
       <Download className="h-4 w-4" />

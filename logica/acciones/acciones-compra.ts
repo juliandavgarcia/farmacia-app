@@ -53,6 +53,7 @@ export const obtenerHistorialCompras = async (): Promise<MensajeRespuesta> => {
     });
 
     const comprasFormateadas = historial.map((compra) => ({
+      id: compra.id,
       numeroFactura: compra.numeroFactura,
       fecha: compra.fecha,
       proveedor: compra.proveedor.nombre,
@@ -70,17 +71,39 @@ export const obtenerCompraPorId = async (
   compraId: string
 ): Promise<MensajeRespuesta> => {
   try {
-    const compra = await prisma.compra.findUnique({
+    const compraRaw = await prisma.compra.findUnique({
       where: { id: compraId },
       include: {
         proveedor: true,
-        detalles: true,
+        usuario: true,
+        detalles: {
+          include: {
+            inventario: {
+              include: {
+                producto: true,
+              },
+            },
+          },
+        },
       },
     });
 
-    if (!compra) {
+    if (!compraRaw) {
       return { error: "Compra no encontrada" };
     }
+
+    // Convertir Decimals a number
+    const compra = {
+      ...compraRaw,
+      subtotal: compraRaw.subtotal.toNumber(),
+      impuestos: compraRaw.impuestos.toNumber(),
+      total: compraRaw.total.toNumber(),
+      detalles: compraRaw.detalles.map((det) => ({
+        ...det,
+        precioUnitario: det.precioUnitario.toNumber(),
+        subtotal: det.subtotal.toNumber(),
+      })),
+    };
 
     return { datos: compra };
   } catch (error) {
