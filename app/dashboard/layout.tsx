@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import { auth } from "@/auth";
 import { BotonUsuario } from "@/componentes/dashboard/sistema/boton-usuario";
 import { MenuLateral } from "@/componentes/dashboard/sistema/menu-lateral";
@@ -33,7 +32,7 @@ export default async function Layout({
           </div>
           <div className="flex items-center space-x-2">
             <BotonTema />
-            <BotonUsuario usuario={session.user as any} />
+            <BotonUsuario />
           </div>
         </header>
         <div className="flex-grow bg-primary/5 dark:bg-neutral-900">

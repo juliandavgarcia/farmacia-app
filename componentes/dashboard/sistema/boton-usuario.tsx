@@ -5,7 +5,6 @@ import {
   DropdownMenuContent,
   DropdownMenuGroup,
   DropdownMenuItem,
-  DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/componentes/ui/dropdown-menu";
@@ -15,23 +14,7 @@ import { User } from "lucide-react";
 import { Button } from "@/componentes/ui/button";
 import { cerrarSesionUsuario } from "@/logica/acciones/acciones-login";
 
-interface PropiedadesBotonPerfil {
-  usuario: {
-    id: string;
-    nombre?: string | null;
-    correo?: string | null;
-    correoVerificado?: Date | null;
-    imagen?: string | null;
-    rol: string;
-    fechaCreacion: Date;
-    fechaActualizacion: Date;
-  };
-}
-
-export function BotonUsuario({ usuario }: PropiedadesBotonPerfil) {
-  const nombreUsuario = usuario?.nombre || "Usuario";
-  const correoUsuario = usuario?.correo || "Correo";
-
+export function BotonUsuario() {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -40,17 +23,7 @@ export function BotonUsuario({ usuario }: PropiedadesBotonPerfil) {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-56 mr-2">
-        <DropdownMenuLabel>
-          <div className="flex flex-col space-y-1">
-            <p className="text-sm font-medium leading-none text-blue-700 dark:text-white">
-              {nombreUsuario}
-            </p>
-            <p className="text-xs leading-none text-muted-foreground">
-              {correoUsuario}
-            </p>
-          </div>
-        </DropdownMenuLabel>
-        <DropdownMenuSeparator />
+        {/* Etiqueta de usuario eliminada */}
         <DropdownMenuGroup>
           <DropdownMenuItem>
             <FiUser className="mr-2 h-4 w-4 text-blue-700 dark:text-white" />
