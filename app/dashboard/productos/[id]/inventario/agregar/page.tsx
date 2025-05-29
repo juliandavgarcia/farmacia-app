@@ -5,7 +5,6 @@ import { ArrowLeft } from "lucide-react";
 
 import { Button } from "@/componentes/ui/button";
 import { prisma } from "@/lib/db";
-import InventarioForm from "@/componentes/dashboard/inventario/formulario-inventario";
 
 export const metadata: Metadata = {
   title: "Agregar Inventario | Sistema de Farmacia",
@@ -55,8 +54,6 @@ export default async function AgregarInventarioPage({
           Agregar inventario al producto: {producto.nombre}
         </p>
       </div>
-
-      <InventarioForm producto={producto} />
     </div>
   );
 }
